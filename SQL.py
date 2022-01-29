@@ -5,8 +5,8 @@ class MyDb(object):
     def __init__(self):
         # 连接数据库
         self.db = pymysql.connect(host='39.99.159.98',
-                                  user='root',
-                                  password='zsy@100618',
+                                  user='finance',
+                                  password='finance',
                                   database='Finance_DB')
         self.cursor = self.db.cursor()
         # print('连接数据库成功')
