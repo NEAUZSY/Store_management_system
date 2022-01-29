@@ -1,71 +1,120 @@
-# -*- encoding=utf-8 -*-
-import tkinter
 from tkinter import *
-from tkinter import messagebox
-from tkinter import ttk
-
-info = [
-    ['1001', '李华', '男', '2014-01-25', '广东', '计算5班', ],
-    ['1002', '小米', '男', '2015-11-08', '深圳', '计算5班', ],
-    ['1003', '刘亮', '男', '2015-09-12', '福建', '计算5班', ],
-    ['1004', '白鸽', '女', '2016-04-01', '湖南', '计算5班', ]]
+import Client_Purchase as CP
+import Client_Login as Cl
+import Client_Check_Store as CCS
+import Client_Sell as CS
+from SQL import MyDb
+import test
 
 
-class Store(object):
-    def __init__(self, info_):
-        win = tkinter.Tk()  # 窗口
-        win.title('库存查询')  # 标题
-        screenwidth = win.winfo_screenwidth()  # 屏幕宽度
-        screenheight = win.winfo_screenheight()  # 屏幕高度
-        width = 640
-        height = 480
+class Windows(object):
+    def __init__(self):
+        # 初始化界面
+        self.is_running = True
+        self.is_Log_In = True
+        self.root = Tk()
+        self.root.title('进销存系统')
+
+        screenwidth = self.root.winfo_screenwidth()  # 屏幕宽度
+        screenheight = self.root.winfo_screenheight()  # 屏幕高度
+        width = 320
+        height = 240
         x = int((screenwidth - width) / 2)
         y = int((screenheight - height) / 2)
-        win.geometry('{}x{}+{}+{}'.format(width, height, x, y))  # 大小以及位置
+        self.root.geometry('{}x{}+{}+{}'.format(width, height, x, y))  # 大小以及位置
 
-        tabel_frame = tkinter.Frame(win)
-        tabel_frame.pack()
+        self.whichwindows = 0
+        # 连接数据库
+        lb1 = Label(self.root, text='正在连接数据库……')
+        lb1.grid(column=0, row=0)
+        self.db = MyDb()
+        lb1.configure(text='连接数据库成功，请选择要使用的功能')
+        btn_pur = Button(self.root, text="入库登记", command=self.Click_btn_pur)
+        btn_sell = Button(self.root, text="出库登记", command=self.Click_btn_sell)
+        btn_stock = Button(self.root, text="库存查询", command=self.Click_btn_stock)
+        btn_logout = Button(self.root, text="注销登录", command=self.Click_btn_logout)
+        btn_exit = Button(self.root, text="退出", command=self.Click_btn_exit)
+        # 这里需要插入一个费用录入按钮 fee 按钮
+        btn_pur.grid(column=0, row=1)
+        btn_sell.grid(column=0, row=3)
+        btn_stock.grid(column=0, row=5)
+        btn_logout.grid(column=0, row=6)
+        btn_exit.grid(column=1, row=6)
+        self.root.mainloop()
 
-        xscroll = Scrollbar(tabel_frame, orient=HORIZONTAL)
-        yscroll = Scrollbar(tabel_frame, orient=VERTICAL)
+    def upload(self, table, dic):
+        # print(dic)
+        self.db.upload(table, dic)
 
-        columns = ['采购单号', '采购单位', '采购日期', '规格', '型号', '数量']
-        table = ttk.Treeview(
-            master=tabel_frame,  # 父容器
-            height=20,  # 表格显示的行数,height行
-            columns=columns,  # 显示的列
-            show='headings',  # 隐藏首列
-            selectmode="extended",  # 选择模式为可多选
-            xscrollcommand=xscroll.set,  # x轴滚动条
-            yscrollcommand=yscroll.set,  # y轴滚动条
-        )
-        for column in columns:
-            table.heading(column=column, text=column, anchor=CENTER,
-                          command=lambda name=column:
-                          messagebox.showinfo('', '{}描述信息~~~'.format(name)))  # 定义表头
-            table.column(column=column, width=100, minwidth=100, anchor=CENTER, )  # 定义列
-        xscroll.config(command=table.xview)
-        xscroll.pack(side=BOTTOM, fill=X)
-        yscroll.config(command=table.yview)
-        yscroll.pack(side=RIGHT, fill=Y)
+    def query(self):
+        return self.db.query()
 
-        for index, data in enumerate(info_):
-            table.insert('', END, values=data)  # 添加数据到末尾
+    def Click_btn_pur(self):
+        self.whichwindows = 1
+        self.root.destroy()
 
-        table.bind('<<TreeviewSelect>>', self.selectTree)
-        table.pack(fill=BOTH, expand=True)
-        self.table = table
-        win.mainloop()
+    def Click_btn_sell(self):
+        self.whichwindows = 2
+        self.root.destroy()
 
-    def selectTree(self, event):
-        for item in self.table.selection():
-            item_text = self.table.item(item, "values")
-            print(item_text)
+    def Click_btn_stock(self):
+        self.whichwindows = 3
+        self.root.destroy()
+
+    def Click_btn_logout(self):
+        self.is_Log_In = False
+        self.root.destroy()
+
+    def Click_btn_exit(self):
+        self.is_Log_In = False
+        self.is_running = False
+        self.root.destroy()
 
 
-def display(info_):
-    quare = Store(info_)
+def main():
+    is_running = True
+    while is_running:
+        # 整个程序的循环，方便注销后依然能够进入系统
+        is_Log_In = test.Log_In_main()
+        while is_Log_In:
+
+            root = Windows()
+            is_Log_In = root.is_Log_In
+            is_running = root.is_running
+            print(is_Log_In, is_running)
+            if not is_running and is_Log_In:
+                break
+            task_Choose = root.whichwindows
+            if task_Choose == 1:
+                print(task_Choose)
+                form = CP.main()
+                if form:
+                    root.upload('record', form)
+                # is_running = False
+                # is_Log_In = False
+                # break
+            elif task_Choose == 2:
+                print(task_Choose)
+                is_quare = True
+                while is_quare:
+                    temp = root.query()
+                    Sell = CS.Sell(temp)
+                    select = Sell.selected
+                    if select:
+                        root.db.delete(select)
+                    is_quare = Sell.is_quare
+                # is_Log_In = False
+                # break
+            elif task_Choose == 3:
+                print(task_Choose)
+                is_check = True
+                while is_check:
+                    temp = root.query()
+                    Store = CCS.Store(temp)
+                    is_check = Store.is_check
+            else:
+                continue
 
 
 if __name__ == '__main__':
-    display(info)
+    main()

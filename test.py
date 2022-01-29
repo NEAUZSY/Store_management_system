@@ -1,86 +1,124 @@
-# -*- encoding=utf-8 -*-
-import tkinter
-from tkinter import *
-from tkinter import messagebox
-from tkinter import ttk
+import pickle
+import tkinter as tk
 
-info = [
-    ['1001', '李华', '男', '2014-01-25', '广东', '计算5班', ],
-    ['1002', '小米', '男', '2015-11-08', '深圳', '计算5班', ],
-    ['1003', '刘亮', '男', '2015-09-12', '福建', '计算5班', ],
-    ['1004', '白鸽', '女', '2016-04-01', '湖南', '计算5班', ]]
+from tkinter import messagebox  # import this to fix messagebox error
+
+Log_Variable = False
 
 
-class Store(object):
-    def __init__(self, info_):
-        self.selected = ''
-        self.win = tkinter.Tk()  # 窗口
-        self.win.title('库存查询')  # 标题
-        screenwidth = self.win.winfo_screenwidth()  # 屏幕宽度
-        screenheight = self.win.winfo_screenheight()  # 屏幕高度
-        width = 640
-        height = 480
+class LogIn(object):
+    def __init__(self):
+
+        self.window_Log = tk.Tk()
+
+        self.Log_Variable = False
+        self.new_pwd = tk.StringVar()
+        self.var_usr_name = tk.StringVar()
+        self.var_usr_name.set('admin')
+        self.new_pwd_confirm = tk.StringVar()
+        self.new_name = tk.StringVar()
+        self.new_name.set('example@python.com')
+
+        screenwidth = self.window_Log.winfo_screenwidth()  # 屏幕宽度
+        screenheight = self.window_Log.winfo_screenheight()  # 屏幕高度
+        self.window_Log.title('Oscar云库存管理系统V1.1')
+        width = 440
+        height = 220
         x = int((screenwidth - width) / 2)
         y = int((screenheight - height) / 2)
-        self.win.geometry('{}x{}+{}+{}'.format(width, height, x, y))  # 大小以及位置
+        self.window_Log.geometry('{}x{}+{}+{}'.format(width, height, x, y))  # 大小以及位置
 
-        tabel_frame = tkinter.Frame(self.win)
-        tabel_frame.pack()
+        # welcome image
+        canvas = tk.Canvas(self.window_Log, height=240, width=600)
+        image_file = tk.PhotoImage(file='../file/Logo.gif')
+        canvas.create_image(0, 0, anchor='nw', image=image_file)
+        canvas.pack(side='top')
 
-        xscroll = Scrollbar(tabel_frame, orient=HORIZONTAL)
-        yscroll = Scrollbar(tabel_frame, orient=VERTICAL)
+        # user information
+        tk.Label(self.window_Log, text='User name: ').place(x=160, y=50)
+        tk.Label(self.window_Log, text='Password: ').place(x=160, y=90)
 
-        columns = ['采购单号', '采购单位', '采购日期', '规格', '型号', '数量']
-        table = ttk.Treeview(
-            master=tabel_frame,  # 父容器
-            height=15,  # 表格显示的行数,height行
-            columns=columns,  # 显示的列
-            show='headings',  # 隐藏首列
-            selectmode="extended",  # 选择模式为可多选
-            xscrollcommand=xscroll.set,  # x轴滚动条
-            yscrollcommand=yscroll.set,  # y轴滚动条
-        )
-        for column in columns:
-            table.heading(column=column, text=column, anchor=CENTER,
-                          command=lambda name=column:
-                          messagebox.showinfo('', '{}描述信息~~~'.format(name)))  # 定义表头
-            table.column(column=column, width=100, minwidth=100, anchor=CENTER, )  # 定义列
-        xscroll.config(command=table.xview)
-        xscroll.pack(side=BOTTOM, fill=X)
-        yscroll.config(command=table.yview)
-        yscroll.pack(side=RIGHT, fill=Y)
+        entry_usr_name = tk.Entry(self.window_Log, textvariable=self.var_usr_name)
+        entry_usr_name.place(x=260, y=50)
+        self.var_usr_pwd = tk.StringVar()
+        entry_usr_pwd = tk.Entry(self.window_Log, textvariable=self.var_usr_pwd, show='*')
+        entry_usr_pwd.place(x=260, y=90)
 
-        for index, data in enumerate(info_):
-            table.insert('', END, values=data)  # 添加数据到末尾
+        # login and sign up button
+        btn_login = tk.Button(self.window_Log, font=('Arial', 12), text='登录', command=self.usr_login)
+        btn_login.place(x=260, y=130)
+        btn_sign_up = tk.Button(self.window_Log, font=('Arial', 12), text='注册', command=self.usr_sign_up)
+        btn_sign_up.place(x=340, y=130)
 
-        table.bind('<<TreeviewSelect>>', self.selectTree)
-        table.pack(fill=BOTH, expand=True)
-        self.table = table
+        self.window_Log.mainloop()
 
-        btn_sell = Button(self.win, text="出库", command=self.Sell)
-        btn_sell.place(x=50, y=400)
+    def sign_to_Reasoning_Hall(self):
+        np = self.new_pwd.get()
+        npf = self.new_pwd_confirm.get()
+        nn = self.new_name.get()
+        with open('../usrs_info.pickle', 'rb') as usr_file:
+            exist_usr_info = pickle.load(usr_file)
+        if np != npf:
+            tk.messagebox.showerror('Error', 'Password and confirm password must be the same!')
+        elif nn in exist_usr_info:
+            tk.messagebox.showerror('Error', 'The user has already signed up!')
+        else:
+            exist_usr_info[nn] = np
+            with open('../usrs_info.pickle', 'wb') as usr_file:
+                pickle.dump(exist_usr_info, usr_file)
+            tk.messagebox.showinfo('Welcome', 'You have successfully signed up!')
+            self.window_sign_up.destroy()
 
-        self.win.mainloop()
+    def usr_login(self):
+        usr_name = self.var_usr_name.get()
+        usr_pwd = self.var_usr_pwd.get()
+        try:
+            with open('../usrs_info.pickle', 'rb') as usr_file:
+                usrs_info = pickle.load(usr_file)
+        except FileNotFoundError:
+            with open('../usrs_info.pickle', 'wb') as usr_file:
+                usrs_info = {'admin': 'admin'}
+                pickle.dump(usrs_info, usr_file)
+        if usr_name in usrs_info:
+            if usr_pwd == usrs_info[usr_name]:
+                # tk.messagebox.showinfo(title='Welcome', message='How are you? ' + usr_name)
+                self.Log_Variable = True
+                self.window_Log.destroy()
+            else:
+                tk.messagebox.showerror(message='Error, your password is wrong, try again.')
+                self.Log_Variable = False
+        else:
+            is_sign_up = tk.messagebox.askyesno('Welcome',
+                                                'You have not signed up yet. Sign up today?')
+            if is_sign_up:
+                self.usr_sign_up()
 
-    def Sell(self):
-        a = messagebox.askokcancel('出库确认', '您是否要要将编号为 %s 的商品出库出库？' % self.selected)  # 弹出对话框
-        if a:
-            print(self.selected)
+    def usr_sign_up(self):
+        self.window_sign_up = tk.Toplevel(self.window_Log)
+        self.entry_new_name = tk.Entry(self.window_sign_up, textvariable=self.new_name)
+        self.window_sign_up.geometry('350x200')
+        self.window_sign_up.title('Sign up window')
 
-    def selectTree(self, event):
-        item_list = []
-        for item in self.table.selection():
-            item_id = self.table.item(item, "values")[0]
-            # print(item_text)
-            item_list.append(item_id)
-        selected = ', '.join(item_list)
-        # print(selected)
-        self.selected = selected
+        tk.Label(self.window_sign_up, text='User name: ').place(x=10, y=10)
+        self.entry_new_name.place(x=150, y=10)
+
+        self.new_pwd = tk.StringVar()
+        tk.Label(self.window_sign_up, text='Password: ').place(x=10, y=50)
+        entry_usr_pwd_ = tk.Entry(self.window_sign_up, textvariable=self.new_pwd, show='*')
+        entry_usr_pwd_.place(x=150, y=50)
+
+        tk.Label(self.window_sign_up, text='Confirm password: ').place(x=10, y=90)
+        entry_usr_pwd_confirm = tk.Entry(self.window_sign_up, textvariable=self.new_pwd_confirm, show='*')
+        entry_usr_pwd_confirm.place(x=150, y=90)
+
+        btn_comfirm_sign_up = tk.Button(self.window_sign_up, text='Sign up', command=self.sign_to_Reasoning_Hall)
+        btn_comfirm_sign_up.place(x=150, y=130)
 
 
-def display(info_):
-    quare = Store(info_)
+def Log_In_main():
+    Log = LogIn()
+    return Log.Log_Variable
 
 
-if __name__ == '__main__':
-    display(info)
+if __name__ == "__main__":
+    Log_In_main()
