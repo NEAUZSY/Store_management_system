@@ -25,9 +25,12 @@ class MyDb(object):
     def upload(self, table, dic):
         print('开始上载数据')
         default = 0
-        dic['规格型号'] = '个'
-        dic['含税进价'] = default
-        dic['未税进价'] = default
+        if not dic['规格型号']:
+            dic['规格型号'] = '个'
+        if not dic['含税进价']:
+            dic['含税进价'] = default
+        if not dic['未税进价']:
+            dic['未税进价'] = default
         # keys = 'id，kind，name，source，model，unit，quantity，cost_withtax，cost_withouttax'
         task = 'insert into {} ' \
                'values({},"{}","{}","{}","{}","{}",{},{},{});'.format(table,
