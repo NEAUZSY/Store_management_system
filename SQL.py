@@ -23,35 +23,34 @@ class MyDb(object):
             self.cursor.connection.commit()
         except:
             self.db.rollback()
-        self.cursor.close()
+        # self.cursor.close()
 
     def upload(self, table, dic):
         print('开始上载数据')
         default = 0
-        if not dic['规格型号']:
-            dic['规格型号'] = '个'
-        if not dic['含税进价']:
-            dic['含税进价'] = default
-        if not dic['未税进价']:
-            dic['未税进价'] = default
+        if not dic['单位']:
+            dic['单位'] = '个'
+
         # keys = 'id，kind，name，source，model，unit，quantity，cost_withtax，cost_withouttax'
         tt = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         task = 'insert into {} ' \
                'values({},"{}","{}","{}","{}","{}","{}",' \
-               '"{}",{},{},{},{},"{}");'.format(table,
-                                                dic['商品编号'],
-                                                dic['日期'],
-                                                dic['往来单位'],
-                                                dic['一级分类'],
-                                                dic['二级分类'],
-                                                dic['商品名称'],
-                                                dic['规格型号'],
-                                                dic['单位'],
-                                                dic['数量'],
-                                                dic['含税进价'],
-                                                dic['未税进价'],
-                                                dic['实际进价'],
-                                                dic['备注/序列号'])
+               '"{}",{},{},{},{},{},"{}",{});'.format(table,
+                                                      dic['序号'],
+                                                      dic['日期'],
+                                                      dic['往来单位'],
+                                                      dic['一级分类'],
+                                                      dic['二级分类'],
+                                                      dic['商品名称'],
+                                                      dic['规格型号'],
+                                                      dic['单位'],
+                                                      dic['数量'],
+                                                      dic['单价（含税）'],
+                                                      dic['单价（未税）'],
+                                                      dic['金额（含税）'],
+                                                      dic['金额（未税）'],
+                                                      dic['备注/序列号'],
+                                                      dic['是否含税'])
         # print(task)
         self.execute(task)
 
@@ -60,9 +59,25 @@ class MyDb(object):
         self.refresh_store('add')
 
     def query(self):
-        self.execute("select * from tb_buy;")
-        temp = self.cursor.fetchall()
+        self.execute("select input_what from tb_buy;")
+        flags = self.cursor.fetchall()
+        print(flags)
+        selects = []
+        for flag in flags:
+            if flag[0]:
+                # 含税
+                selects.append(
+                    'id,date,source,root_class,class,name,model,unit,quantity,'
+                    'price_withtax,value_withtax,remark from tb_buy where input_what=1;')
+            else:
+                selects.append(
+                    'id,date,source,root_class,class,name,model,unit,quantity,'
+                    'price_withouttax,value_withouttax,remark from tb_buy where input_what=0;')
         # print(temp)
+        for select in selects:
+            print(select)
+            self.execute("select %s;" % select)
+        temp = self.cursor.fetchall()
         return temp
 
     def delete(self, datas):
@@ -76,8 +91,8 @@ class MyDb(object):
     def refresh_store(self, method):
         """根据入库信息和出库信息刷新库存单"""
         print('刷新库存', method)
-        if method == 'add':
-            print(self.dic)
+        # if method == 'add':
+        #     print(self.dic)
 
 
 def main():

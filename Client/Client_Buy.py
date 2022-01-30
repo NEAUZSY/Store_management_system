@@ -28,6 +28,7 @@ class Buy(object):
         self.var_yy = tk.StringVar(value=yy)
         self.var_mm = tk.StringVar(value=mm)
         self.var_dd = tk.StringVar(value=dd)
+        self.is_with_tax = tk.IntVar(value=2)
 
     def filling(self):
         self.init_purchase()
@@ -127,13 +128,13 @@ class Buy(object):
         lb8 = tk.Label(root,
                        bg='#DDEBF7',
                        font=('Arial', 12),
-                       text='含税进价:')
+                       text='单        价:')
         lb8.place(x=15, y=370)
 
         lb9 = tk.Label(root,
                        bg='#DDEBF7',
                        font=('Arial', 12),
-                       text='未税进价:')
+                       text='金        额:')
         lb9.place(x=15, y=410)
 
         lb10 = tk.Label(root,
@@ -156,18 +157,17 @@ class Buy(object):
         En6.place(x=110, y=290)
         En7 = tk.Entry(root, bd=2)
         En7.place(x=110, y=330)
-        En8 = tk.Entry(root, bd=2)
+        En8 = tk.Entry(root, bd=2, width=10)
         En8.place(x=110, y=370)
         En9 = tk.Entry(root, bd=2)
         En9.place(x=110, y=410)
         En10 = tk.Entry(root, bd=2)
         En10.place(x=110, y=450)
 
-        # is_with_tax = tk.IntVar()
-        # with_tax = tk.Radiobutton(root, text='含税', variable=is_with_tax, value=1, )
-        # with_tax.place(x=250, y=430)
-        # without_tax = tk.Radiobutton(root, text='未税', variable=is_with_tax, value=0, )
-        # without_tax.place(x=300, y=430)
+        with_tax = tk.Radiobutton(root, text='含税', variable=self.is_with_tax, value=1)
+        with_tax.place(x=200, y=353)
+        without_tax = tk.Radiobutton(root, text='未税', variable=self.is_with_tax, value=0)
+        without_tax.place(x=200, y=381)
 
         self.forms = En1, En2, En3, En4, En5, En6, En7, En8, En9, En10, root  # , is_with_tax
 
@@ -181,7 +181,7 @@ class Buy(object):
         goods_id = self.max_id + 1
         data = "{}-{}-{}".format(self.var_yy.get(), self.var_mm.get(), self.var_dd.get())
         En1, En2, En3, En4, En5, En6, En7, En8, En9, En10, root = self.forms
-        form = {'商品编号': goods_id,
+        form = {'序号': goods_id,
                 '日期': data,
                 '往来单位': En1.get(),
                 '一级分类': En2.get(),
@@ -190,25 +190,45 @@ class Buy(object):
                 '规格型号': En5.get(),
                 '单位': En6.get(),
                 '数量': En7.get(),
-                '备注/序列号': En10.get()}
-
-        if En8.get() and En9.get():
-            messagebox.askokcancel('输入有误', '您只能输入一个价格')
+                '备注/序列号': En10.get(),
+                '是否含税': self.is_with_tax.get()}
+        if self.is_with_tax.get() == 2:
+            messagebox.askokcancel('未勾选必选项', '您还未选择所输入金额是否含税')
             return
-        elif En9.get():
-            without_tax = float(En9.get())
-            form['未税进价'] = without_tax
-            form['含税进价'] = without_tax * 1.13
-            form['实际进价'] = without_tax
+        if En8.get() and En9.get():
+            messagebox.askokcancel('输入有误', '您只能输入单价或者金额')
+            return
         elif En8.get():
-            with_tax = float(En8.get())
-            form['含税进价'] = with_tax
-            form['未税进价'] = with_tax / 1.13
-            form['实际进价'] = with_tax
+            price = float(En8.get())
+            if self.is_with_tax.get() == 0:
+                form['单价（未税）'] = price
+                form['单价（含税）'] = price * 1.13
+                form['金额（未税）'] = price * float(En7.get())
+                form['金额（含税）'] = price * 1.13 * float(En7.get())
+            else:
+                form['单价（含税）'] = price
+                form['单价（未税）'] = price / 1.13
+                form['金额（含税）'] = price * float(En7.get())
+                form['金额（未税）'] = price * float(En7.get()) / 1.13
+        elif En9.get():
+            value = float(En9.get())
+            if self.is_with_tax.get() == 0:
+                # 未税
+                form['单价（未税）'] = value / float(En7.get())
+                form['单价（含税）'] = value / float(En7.get()) * 1.13
+                form['金额（未税）'] = value
+                form['金额（含税）'] = value * 1.13
+            else:
+                # 含税
+                form['单价（未税）'] = value / float(En7.get()) / 1.13
+                form['单价（含税）'] = value / float(En7.get())
+                form['金额（未税）'] = value / 1.13
+                form['金额（含税）'] = value
         else:
             messagebox.askokcancel('输入有误', '您还没有输入价格')
             return
         root.destroy()
+        print(form)
         self.form = form
 
 
