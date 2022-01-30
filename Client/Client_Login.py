@@ -1,9 +1,6 @@
 import pickle
 import tkinter as tk
-
 from tkinter import messagebox  # import this to fix messagebox error
-
-Log_Variable = False
 
 
 class LogIn(object):

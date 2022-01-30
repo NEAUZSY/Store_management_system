@@ -2,8 +2,6 @@ import tkinter as tk
 from tkinter import messagebox
 from SQL import MyDb
 
-FORM = {}
-
 
 class Buy(object):
     def __init__(self):
