@@ -30,8 +30,8 @@ class Store(object):
         xscroll = Scrollbar(tabel_frame, orient=HORIZONTAL)
         yscroll = Scrollbar(tabel_frame, orient=VERTICAL)
 
-        columns = ['商品编号', '往来单位', '一级分类', '二级分类', '商品名称',
-                   '规格型号', '单位', '数量', '含税进价', '未税进价']
+        columns = ['商品编号', '入库时间', '往来单位', '一级分类', '二级分类', '商品名称',
+                   '规格型号', '单位', '数量', '含税进价', '未税进价', '实际进价', '备注/序列号']
         table = ttk.Treeview(
             master=tabel_frame,  # 父容器
             height=20,  # 表格显示的行数,height行

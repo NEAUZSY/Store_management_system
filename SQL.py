@@ -1,4 +1,5 @@
 import pymysql
+from datetime import datetime
 
 
 class MyDb(object):
@@ -9,6 +10,8 @@ class MyDb(object):
                                   password='finance',
                                   database='Finance_DB')
         self.cursor = self.db.cursor()
+        self.dic = {}
+        self.delete_id = ''
         # print('连接数据库成功')
 
     def execute(self, task):
@@ -32,34 +35,49 @@ class MyDb(object):
         if not dic['未税进价']:
             dic['未税进价'] = default
         # keys = 'id，kind，name，source，model，unit，quantity，cost_withtax，cost_withouttax'
+        tt = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         task = 'insert into {} ' \
-               'values({},"{}","{}","{}","{}","{}","{}",{},{},{});'.format(table,
-                                                                           dic['商品编号'],
-                                                                           dic['往来单位'],
-                                                                           dic['一级分类'],
-                                                                           dic['二级分类'],
-                                                                           dic['商品名称'],
-                                                                           dic['规格型号'],
-                                                                           dic['单位'],
-                                                                           dic['数量'],
-                                                                           dic['含税进价'],
-                                                                           dic['未税进价'])
-        print(task)
+               'values({},"{}","{}","{}","{}","{}","{}",' \
+               '"{}",{},{},{},{},"{}");'.format(table,
+                                                dic['商品编号'],
+                                                dic['日期'],
+                                                dic['往来单位'],
+                                                dic['一级分类'],
+                                                dic['二级分类'],
+                                                dic['商品名称'],
+                                                dic['规格型号'],
+                                                dic['单位'],
+                                                dic['数量'],
+                                                dic['含税进价'],
+                                                dic['未税进价'],
+                                                dic['实际进价'],
+                                                dic['备注/序列号'])
+        # print(task)
         self.execute(task)
 
-        print('上载数据成功')
+        # print('上载数据成功')
+        self.dic = dic
+        self.refresh_store('add')
 
     def query(self):
         self.execute("select * from tb_buy;")
         temp = self.cursor.fetchall()
-        print(temp)
+        # print(temp)
         return temp
 
     def delete(self, datas):
         task = 'delete from tb_buy where id in ({});'.format(datas)
         self.execute(task)
-        print(task)
-        print('出库成功')
+        # print(task)
+        # print('出库成功')
+        self.delete_id = datas
+        self.refresh_store('delete')
+
+    def refresh_store(self, method):
+        """根据入库信息和出库信息刷新库存单"""
+        print('刷新库存', method)
+        if method == 'add':
+            print(self.dic)
 
 
 def main():
