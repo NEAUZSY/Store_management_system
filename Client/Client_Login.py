@@ -52,7 +52,8 @@ class LogIn(object):
         btn_sign_up.place(x=340, y=130)
 
         self.window_Log.protocol('WM_DELETE_WINDOW', self.exit)
-
+        self.window_Log.focus_set()
+        self.window_Log.bind('<Key-Return>', self.usr_login)
         self.window_Log.mainloop()
 
     def sign_to_Reasoning_Hall(self):
@@ -72,7 +73,8 @@ class LogIn(object):
             tk.messagebox.showinfo('Welcome', 'You have successfully signed up!')
             self.window_sign_up.destroy()
 
-    def usr_login(self):
+    def usr_login(self, event):
+        print('正在登陆')
         usr_name = self.var_usr_name.get()
         usr_pwd = self.var_usr_pwd.get()
         try:

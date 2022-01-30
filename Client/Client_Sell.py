@@ -31,7 +31,8 @@ class Sell(object):
         xscroll = Scrollbar(tabel_frame, orient=HORIZONTAL)
         yscroll = Scrollbar(tabel_frame, orient=VERTICAL)
 
-        columns = ['采购单号', '采购单位', '采购日期', '规格', '型号', '数量']
+        columns = ['商品编号', '往来单位', '一级分类', '二级分类', '商品名称',
+                   '规格型号', '单位', '数量', '含税进价', '未税进价']
         table = ttk.Treeview(
             master=tabel_frame,  # 父容器
             height=15,  # 表格显示的行数,height行

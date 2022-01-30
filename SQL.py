@@ -33,28 +33,30 @@ class MyDb(object):
             dic['未税进价'] = default
         # keys = 'id，kind，name，source，model，unit，quantity，cost_withtax，cost_withouttax'
         task = 'insert into {} ' \
-               'values({},"{}","{}","{}","{}","{}",{},{},{});'.format(table,
-                                                                      dic['商品编号'],
-                                                                      dic['类别'],
-                                                                      dic['商品名称'],
-                                                                      dic['商品来源'],
-                                                                      dic['规格型号'],
-                                                                      dic['单位'],
-                                                                      dic['数量'],
-                                                                      dic['含税进价'],
-                                                                      dic['未税进价'])
+               'values({},"{}","{}","{}","{}","{}","{}",{},{},{});'.format(table,
+                                                                           dic['商品编号'],
+                                                                           dic['往来单位'],
+                                                                           dic['一级分类'],
+                                                                           dic['二级分类'],
+                                                                           dic['商品名称'],
+                                                                           dic['规格型号'],
+                                                                           dic['单位'],
+                                                                           dic['数量'],
+                                                                           dic['含税进价'],
+                                                                           dic['未税进价'])
         print(task)
         self.execute(task)
 
         print('上载数据成功')
 
     def query(self):
-        self.execute("select * from store;")
+        self.execute("select * from tb_buy;")
         temp = self.cursor.fetchall()
+        print(temp)
         return temp
 
     def delete(self, datas):
-        task = 'delete from store where id in ({});'.format(datas)
+        task = 'delete from tb_buy where id in ({});'.format(datas)
         self.execute(task)
         print(task)
         print('出库成功')
