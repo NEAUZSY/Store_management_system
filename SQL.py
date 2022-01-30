@@ -24,25 +24,34 @@ class MyDb(object):
 
     def upload(self, table, dic):
         print('开始上载数据')
-        task = 'insert into {}(id, source, date, Specifications, model, quantity) ' \
-               'values({},{},{},{},{},{});'.format(table,
-                                                   dic['采购单号'],
-                                                   dic['采购单位'],
-                                                   dic['采购日期'],
-                                                   dic['规格'],
-                                                   dic['型号'],
-                                                   dic['数量'])
+        default = 0
+        dic['规格型号'] = '个'
+        dic['含税进价'] = default
+        dic['未税进价'] = default
+        # keys = 'id，kind，name，source，model，unit，quantity，cost_withtax，cost_withouttax'
+        task = 'insert into {} ' \
+               'values({},"{}","{}","{}","{}","{}",{},{},{});'.format(table,
+                                                                      dic['商品编号'],
+                                                                      dic['类别'],
+                                                                      dic['商品名称'],
+                                                                      dic['商品来源'],
+                                                                      dic['规格型号'],
+                                                                      dic['单位'],
+                                                                      dic['数量'],
+                                                                      dic['含税进价'],
+                                                                      dic['未税进价'])
+        print(task)
         self.execute(task)
 
         print('上载数据成功')
 
     def query(self):
-        self.execute("select * from record;")
+        self.execute("select * from store;")
         temp = self.cursor.fetchall()
         return temp
 
     def delete(self, datas):
-        task = 'delete from record where id in ({});'.format(datas)
+        task = 'delete from store where id in ({});'.format(datas)
         self.execute(task)
         print(task)
         print('出库成功')

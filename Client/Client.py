@@ -87,7 +87,7 @@ def main():
                 print(task_Choose)
                 form = Cb.main()
                 if form:
-                    root.upload('record', form)
+                    root.upload('store', form)
                 # is_running = False
                 # is_Log_In = False
                 # break

@@ -27,37 +27,37 @@ def init_form(root):
     lb1 = tk.Label(root,
                    bg='#DDEBF7',
                    font=('Arial', 12),
-                   text='采购单号：')
+                   text='商品编号：')
     lb1.place(x=5, y=100)
 
     lb2 = tk.Label(root,
                    bg='#DDEBF7',
                    font=('Arial', 12),
-                   text='采购单位：')
+                   text='类        别：')
     lb2.place(x=5, y=150)
 
     lb3 = tk.Label(root,
                    bg='#DDEBF7',
                    font=('Arial', 12),
-                   text='采购日期')
+                   text='商品名称')
     lb3.place(x=5, y=200)
 
     lb4 = tk.Label(root,
                    bg='#DDEBF7',
                    font=('Arial', 12),
-                   text='规        格：')
+                   text='商品来源')
     lb4.place(x=5, y=250)
 
     lb5 = tk.Label(root,
                    bg='#DDEBF7',
                    font=('Arial', 12),
-                   text='型        号：')
+                   text='单        位：')
     lb5.place(x=5, y=300)
 
     lb6 = tk.Label(root,
                    bg='#DDEBF7',
                    font=('Arial', 12),
-                   text='数        量：：')
+                   text='数        量：')
     lb6.place(x=5, y=350)
 
     En1 = tk.Entry(root, bd=2)
@@ -82,11 +82,11 @@ def init_form(root):
 def add_purchase(forms):
     global FORM
     En1, En2, En3, En4, En5, En6, root = forms
-    form = {'采购单号': En1.get(),
-            '采购单位': En2.get(),
-            '采购日期': En3.get(),
-            '规格': En4.get(),
-            '型号': En5.get(),
+    form = {'商品编号': En1.get(),
+            '类别': En2.get(),
+            '商品名称': En3.get(),
+            '商品来源': En4.get(),
+            '单位': En5.get(),
             '数量': En6.get()}
     root.destroy()
     print(form)
