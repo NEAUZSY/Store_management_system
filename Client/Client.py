@@ -1,8 +1,8 @@
 from tkinter import *
-import Client_Purchase as CP
+import Client_Buy as Cb
 import Client_Login as Cl
-import Client_Check_Store as CCS
-import Client_Sell as CS
+import Client_Check_Store as Ccs
+import Client_Sell as Cs
 from SQL import MyDb
 
 
@@ -85,7 +85,7 @@ def main():
             task_Choose = root.whichwindows
             if task_Choose == 1:
                 print(task_Choose)
-                form = CP.main()
+                form = Cb.main()
                 if form:
                     root.upload('record', form)
                 # is_running = False
@@ -96,7 +96,7 @@ def main():
                 is_quare = True
                 while is_quare:
                     temp = root.query()
-                    Sell = CS.Sell(temp)
+                    Sell = Cs.Sell(temp)
                     select = Sell.selected
                     if select:
                         root.db.delete(select)
@@ -108,7 +108,7 @@ def main():
                 is_check = True
                 while is_check:
                     temp = root.query()
-                    Store = CCS.Store(temp)
+                    Store = Ccs.Store(temp)
                     is_check = Store.is_check
             else:
                 continue
