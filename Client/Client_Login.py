@@ -73,7 +73,7 @@ class LogIn(object):
             tk.messagebox.showinfo('Welcome', 'You have successfully signed up!')
             self.window_sign_up.destroy()
 
-    def usr_login(self, event):
+    def usr_login(self, event=None):
         print('正在登陆')
         usr_name = self.var_usr_name.get()
         usr_pwd = self.var_usr_pwd.get()

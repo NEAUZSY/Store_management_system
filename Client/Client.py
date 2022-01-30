@@ -16,7 +16,7 @@ class Windows(object):
 
         screenwidth = self.root.winfo_screenwidth()  # 屏幕宽度
         screenheight = self.root.winfo_screenheight()  # 屏幕高度
-        width = 320
+        width = 190
         height = 240
         x = int((screenwidth - width) / 2)
         y = int((screenheight - height) / 2)
@@ -27,18 +27,18 @@ class Windows(object):
         lb1 = Label(self.root, text='正在连接数据库……')
         lb1.grid(column=0, row=0)
         self.db = MyDb()
-        lb1.configure(text='连接数据库成功，请选择要使用的功能')
+        lb1.configure(text='请选择要使用的功能', font=('Arial', 15),)
         btn_pur = Button(self.root, text="入库登记", command=self.Click_btn_pur)
         btn_sell = Button(self.root, text="出库登记", command=self.Click_btn_sell)
         btn_stock = Button(self.root, text="库存查询", command=self.Click_btn_stock)
-        btn_logout = Button(self.root, text="注销登录", command=self.Click_btn_logout)
+        btn_logout = Button(self.root, text="注销", command=self.Click_btn_logout)
         btn_exit = Button(self.root, text="退出", command=self.Click_btn_exit)
         # 这里需要插入一个费用录入按钮 fee 按钮
-        btn_pur.grid(column=0, row=1)
-        btn_sell.grid(column=0, row=3)
-        btn_stock.grid(column=0, row=5)
-        btn_logout.grid(column=0, row=6)
-        btn_exit.grid(column=1, row=6)
+        btn_pur.place(x=60, y=50)
+        btn_sell.place(x=60, y=100)
+        btn_stock.place(x=60, y=150)
+        btn_logout.place(x=30, y=200)
+        btn_exit.place(x=110, y=200)
         self.root.mainloop()
 
     def upload(self, table, dic):
@@ -85,7 +85,8 @@ def main():
             task_Choose = root.whichwindows
             if task_Choose == 1:
                 print(task_Choose)
-                form = Cb.main()
+                buy = Cb.Buy()
+                form = buy.filling()
                 if form:
                     root.upload('tb_buy', form)
                 # is_running = False
