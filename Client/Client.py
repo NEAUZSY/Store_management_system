@@ -29,14 +29,15 @@ class Windows(object):
         self.db = MyDb()
         lb1.configure(text='请选择要使用的功能', font=('Arial', 15),)
         btn_pur = Button(self.root, text="入库登记", command=self.Click_btn_pur)
+        btn_stock = Button(self.root, text="入库记录查询", command=self.Click_btn_stock)
         btn_sell = Button(self.root, text="出库登记", command=self.Click_btn_sell)
-        btn_stock = Button(self.root, text="库存查询", command=self.Click_btn_stock)
         btn_logout = Button(self.root, text="注销", command=self.Click_btn_logout)
         btn_exit = Button(self.root, text="退出", command=self.Click_btn_exit)
         # 这里需要插入一个费用录入按钮 fee 按钮
         btn_pur.place(x=60, y=50)
-        btn_sell.place(x=60, y=100)
-        btn_stock.place(x=60, y=150)
+        btn_stock.place(x=60, y=100)
+        btn_sell.place(x=60, y=150)
+
         btn_logout.place(x=30, y=200)
         btn_exit.place(x=110, y=200)
         self.root.mainloop()
