@@ -15,7 +15,7 @@ class Buy(object):
         dd = tt[8:10]
 
         # print('当前库存为')
-        data = self.db.query()
+        data = self.db.query('tb_buy')
         self.max_id = 0
         if data:
             self.max_id = data[0][0]

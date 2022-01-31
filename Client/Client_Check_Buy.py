@@ -4,6 +4,12 @@ from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk
 
+info = [
+    ['1001', '李华', '男', '2014-01-25', '广东', '计算5班', ],
+    ['1002', '小米', '男', '2015-11-08', '深圳', '计算5班', ],
+    ['1003', '刘亮', '男', '2015-09-12', '福建', '计算5班', ],
+    ['1004', '白鸽', '女', '2016-04-01', '湖南', '计算5班', ]]
+
 
 class Store(object):
     def __init__(self, info_):
@@ -24,7 +30,7 @@ class Store(object):
         xscroll = Scrollbar(tabel_frame, orient=HORIZONTAL)
         yscroll = Scrollbar(tabel_frame, orient=VERTICAL)
 
-        columns = ['序号', '往来单位', '一级分类',
+        columns = ['序号', '入库时间', '往来单位', '一级分类',
                    '二级分类', '商品名称', '规格型号', '单位',
                    '数量', '单价', '金额', '备注/序列号']
         table = ttk.Treeview(

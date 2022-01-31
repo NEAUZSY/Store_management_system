@@ -1,88 +1,145 @@
-import pymysql
-from datetime import datetime
+from tkinter import *
+import Client.Client_Buy as Cb
+import Client.Client_Login as Cl
+import Client.Client_Check_Buy as Ccb
+import Client.Client_Sell as Cs
+from SQL import MyDb
 
 
-class MyDb(object):
+class Windows(object):
     def __init__(self):
+        # 初始化界面
+        self.is_running = True
+        self.is_Log_In = True
+        self.root = Tk()
+        self.root.title('进销存系统')
+
+        screenwidth = self.root.winfo_screenwidth()  # 屏幕宽度
+        screenheight = self.root.winfo_screenheight()  # 屏幕高度
+        width = 190
+        height = 300
+        x = int((screenwidth - width) / 2)
+        y = int((screenheight - height) / 2)
+        self.root.geometry('{}x{}+{}+{}'.format(width, height, x, y))  # 大小以及位置
+
+        self.whichwindows = 0
         # 连接数据库
-        self.db = pymysql.connect(host='39.99.159.98',
-                                  user='finance',
-                                  password='finance',
-                                  database='Finance_DB')
-        self.cursor = self.db.cursor()
-        self.dic = {}
-        self.delete_id = ''
-        # print('连接数据库成功')
+        lb1 = Label(self.root, text='正在连接数据库……')
+        lb1.grid(column=0, row=0)
+        self.db = MyDb()
+        lb1.configure(text='请选择要使用的功能', font=('Arial', 15), )
+        btn_pur = Button(self.root, text="入库登记", command=self.Click_btn_pur)
+        btn_quera_buy = Button(self.root, text="入库记录查询", command=self.Click_btn_quera_buy)
+        btn_stock = Button(self.root, text="库存查询", command=self.Click_btn_stock)
+        btn_sell = Button(self.root, text="出库登记", command=self.Click_btn_sell)
+        btn_logout = Button(self.root, text="注销", command=self.Click_btn_logout)
+        btn_exit = Button(self.root, text="退出", command=self.Click_btn_exit)
 
-    def execute(self, task):
-        # 执行SQL语句 以字符串形式传入
-        # self.cursor.execute("use Finance_DB;")
-        self.cursor = self.db.cursor()
-        try:
-            self.cursor.execute(task)
-            self.cursor.connection.commit()
-        except:
-            self.db.rollback()
-        self.cursor.close()
+        # 这里需要插入一个费用录入按钮 fee 按钮
+        btn_pur.place(x=60, y=50)
+        btn_quera_buy.place(x=60, y=100)
+        btn_stock.place(x=60, y=150)
+        btn_sell.place(x=60, y=200)
 
-    def upload(self, table, dic):
-        print('开始上载数据')
-        default = 0
-        if not dic['单位']:
-            dic['单位'] = '个'
+        btn_logout.place(x=30, y=250)
+        btn_exit.place(x=110, y=250)
+        self.root.mainloop()
 
-        # keys = 'id，kind，name，source，model，unit，quantity，cost_withtax，cost_withouttax'
-        tt = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        task = 'insert into {} ' \
-               'values({},"{}","{}","{}","{}","{}","{}",' \
-               '"{}",{},{},{},{},{},"{}",{});'.format(table,
-                                                      dic['序号'],
-                                                      dic['日期'],
-                                                      dic['往来单位'],
-                                                      dic['一级分类'],
-                                                      dic['二级分类'],
-                                                      dic['商品名称'],
-                                                      dic['规格型号'],
-                                                      dic['单位'],
-                                                      dic['数量'],
-                                                      dic['单价（含税）'],
-                                                      dic['单价（未税）'],
-                                                      dic['金额（含税）'],
-                                                      dic['金额（未税）'],
-                                                      dic['备注/序列号'],
-                                                      dic['是否含税'])
-        # print(task)
-        self.execute(task)
+    def Click_btn_pur(self):
+        # 入库按钮回调函数
+        self.whichwindows = 1
+        self.root.destroy()
+        buy = Cb.Buy()
+        form = buy.filling()
+        if form:
+            self.db.upload('tb_buy', form)
 
-        # print('上载数据成功')
-        self.dic = dic
-        self.refresh_store('add')
+    def Click_btn_quera_buy(self):
+        # 入库记录查询按钮回调
+        is_check = True
+        while is_check:
+            temp = self.db.query('tb_buy')
+            Store = Ccb.Store(temp)
+            is_check = Store.is_check
 
-    def query(self):
-        self.execute("select input_what from tb_buy;")
-        temp = self.cursor.fetchall()
-        # print(temp)
-        return temp
+    def Click_btn_stock(self):
+        # 查询库存按钮回调函数
+        self.whichwindows = 3
+        self.root.destroy()
+        is_check = True
+        while is_check:
+            temp = self.db.query('tb_store')
+            Store = Ccb.Store(temp)
+            is_check = Store.is_check
 
-    def delete(self, datas):
-        task = 'delete from tb_buy where id in ({});'.format(datas)
-        self.execute(task)
-        # print(task)
-        # print('出库成功')
-        self.delete_id = datas
-        self.refresh_store('delete')
+    def Click_btn_sell(self):
+        # 出库按钮回调函数
+        self.whichwindows = 2
+        self.root.destroy()
+        is_quare = True
+        while is_quare:
+            temp = self.db.query('tb_store')
+            Sell = Cs.Sell(temp)
+            select = Sell.selected
+            if select:
+                self.db.delete(select)
+            is_quare = Sell.is_quare
 
-    def refresh_store(self, method):
-        """根据入库信息和出库信息刷新库存单"""
-        print('刷新库存', method)
-        if method == 'add':
-            print(self.dic)
+    def Click_btn_logout(self):
+        # 注销
+        self.is_Log_In = False
+        self.root.destroy()
+
+    def Click_btn_exit(self):
+        # 退出
+        self.is_Log_In = False
+        self.is_running = False
+        self.root.destroy()
 
 
 def main():
-    MDB = MyDb()
-    # MDB.execute('CREATE TABLE EMPLOYEE (FIRST_NAME  CHAR(20) NOT NULL,'
-    #             'LAST_NAME  CHAR(20),AGE INT,SEX CHAR(1),INCOME FLOAT )')
+    is_running = True
+    while is_running:
+        # 整个程序的循环，方便注销后依然能够进入系统
+        is_Log_In, is_running = Cl.Log_In_main()
+        while is_Log_In:
+            root = Windows()
+            is_Log_In = root.is_Log_In
+            is_running = root.is_running
+            # # print(is_Log_In, is_running)
+            # if not is_running and is_Log_In:
+            #     break
+            # task_Choose = root.whichwindows
+            # if task_Choose == 1:
+            #     # print(task_Choose)
+            #     buy = Cb.Buy()
+            #     form = buy.filling()
+            #     if form:
+            #         root.upload('tb_buy', form)
+            #     # is_running = False
+            #     # is_Log_In = False
+            #     # break
+            # elif task_Choose == 2:
+            #     # print(task_Choose)
+            #     is_quare = True
+            #     while is_quare:
+            #         temp = root.query()
+            #         Sell = Cs.Sell(temp)
+            #         select = Sell.selected
+            #         if select:
+            #             root.db.delete(select)
+            #         is_quare = Sell.is_quare
+            #     # is_Log_In = False
+            #     # break
+            # elif task_Choose == 3:
+            #     # print(task_Choose)
+            #     is_check = True
+            #     while is_check:
+            #         temp = root.query()
+            #         Store = Ccs.Store(temp)
+            #         is_check = Store.is_check
+            # else:
+            #     continue
 
 
 if __name__ == '__main__':
