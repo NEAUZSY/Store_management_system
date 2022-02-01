@@ -1,146 +1,73 @@
-from tkinter import *
-import Client.Client_Buy as Cb
-import Client.Client_Login as Cl
-import Client.Client_Check_Buy as Ccb
-import Client.Client_Sell as Cs
-from SQL import MyDb
+import tkinter as tk
+from tkinter import ttk
+
+window = tk.Tk()
+# 设置窗口大小
+winWidth = 600
+winHeight = 400
+# 获取屏幕分辨率
+screenWidth = window.winfo_screenwidth()
+screenHeight = window.winfo_screenheight()
+
+x = int((screenWidth - winWidth) / 2)
+y = int((screenHeight - winHeight) / 2)
+
+# 设置主窗口标题
+window.title("TreeView参数说明")
+# 设置窗口初始位置在屏幕居中
+window.geometry("%sx%s+%s+%s" % (winWidth, winHeight, x, y))
+# 设置窗口图标
+# 设置窗口宽高固定
+window.resizable(0, 0)
+
+# 定义列的名称
+columns = ("name", "gender", "age")
+tree = ttk.Treeview(window, show="headings", columns=columns, selectmode=tk.BROWSE)
+
+# 设置表格文字居中
+tree.column("name", anchor="center")
+tree.column("gender", anchor="center")
+tree.column("age", anchor="center")
+
+# 设置表格头部标题
+tree.heading("name", text="姓名")
+tree.heading("gender", text="性别")
+tree.heading("age", text="年龄")
+
+# 设置表格内容
+lists = [{"name": "yang", "gender": "男", "age": "18"}, {"name": "郑", "gender": "女", "age": "25"}]
+i = 0
+for v in lists:
+    tree.insert('', i, values=(v.get("name"), v.get("gender"), v.get("age")))
+    i += 1
+
+tree.pack(expand=True, fill=tk.BOTH)
 
 
-class Windows(object):
-    def __init__(self):
-        # 初始化界面
-        self.is_running = True
-        self.is_Log_In = True
-        self.root = Tk()
-        self.root.title('进销存系统')
-
-        screenwidth = self.root.winfo_screenwidth()  # 屏幕宽度
-        screenheight = self.root.winfo_screenheight()  # 屏幕高度
-        width = 190
-        height = 300
-        x = int((screenwidth - width) / 2)
-        y = int((screenheight - height) / 2)
-        self.root.geometry('{}x{}+{}+{}'.format(width, height, x, y))  # 大小以及位置
-
-        self.whichwindows = 0
-        # 连接数据库
-        lb1 = Label(self.root, text='正在连接数据库……')
-        lb1.grid(column=0, row=0)
-        self.db = MyDb()
-        lb1.configure(text='请选择要使用的功能', font=('Arial', 15), )
-        btn_pur = Button(self.root, text="入库登记", command=self.Click_btn_pur)
-        btn_quera_buy = Button(self.root, text="入库记录查询", command=self.Click_btn_quera_buy)
-        btn_stock = Button(self.root, text="库存查询", command=self.Click_btn_stock)
-        btn_sell = Button(self.root, text="出库登记", command=self.Click_btn_sell)
-        btn_logout = Button(self.root, text="注销", command=self.Click_btn_logout)
-        btn_exit = Button(self.root, text="退出", command=self.Click_btn_exit)
-
-        # 这里需要插入一个费用录入按钮 fee 按钮
-        btn_pur.place(x=60, y=50)
-        btn_quera_buy.place(x=60, y=100)
-        btn_stock.place(x=60, y=150)
-        btn_sell.place(x=60, y=200)
-
-        btn_logout.place(x=30, y=250)
-        btn_exit.place(x=110, y=250)
-        self.root.mainloop()
-
-    def Click_btn_pur(self):
-        # 入库按钮回调函数
-        self.whichwindows = 1
-        self.root.destroy()
-        buy = Cb.Buy()
-        form = buy.filling()
-        if form:
-            self.db.upload('tb_buy', form)
-
-    def Click_btn_quera_buy(self):
-        # 入库记录查询按钮回调
-        is_check = True
-        while is_check:
-            temp = self.db.query('tb_buy')
-            Store = Ccb.Store(temp)
-            is_check = Store.is_check
-
-    def Click_btn_stock(self):
-        # 查询库存按钮回调函数
-        self.whichwindows = 3
-        self.root.destroy()
-        is_check = True
-        while is_check:
-            temp = self.db.query('tb_store')
-            Store = Ccb.Store(temp)
-            is_check = Store.is_check
-
-    def Click_btn_sell(self):
-        # 出库按钮回调函数
-        self.whichwindows = 2
-        self.root.destroy()
-        is_quare = True
-        while is_quare:
-            temp = self.db.query('tb_store')
-            Sell = Cs.Sell(temp)
-            select = Sell.selected
-            if select:
-                self.db.delete(select)
-            is_quare = Sell.is_quare
-
-    def Click_btn_logout(self):
-        # 注销
-        self.is_Log_In = False
-        self.root.destroy()
-
-    def Click_btn_exit(self):
-        # 退出
-        self.is_Log_In = False
-        self.is_running = False
-        self.root.destroy()
+# 获取当前点击行的值
+def treeviewClick(event):  # 单击
+    for item in tree.selection():
+        item_text = tree.item(item, "values")
+        print(item_text)
 
 
-def main():
-    is_running = True
-    while is_running:
-        # 整个程序的循环，方便注销后依然能够进入系统
-        is_Log_In, is_running = Cl.Log_In_main()
-        while is_Log_In:
-            root = Windows()
-            is_Log_In = root.is_Log_In
-            is_running = root.is_running
-            # # print(is_Log_In, is_running)
-            # if not is_running and is_Log_In:
-            #     break
-            # task_Choose = root.whichwindows
-            # if task_Choose == 1:
-            #     # print(task_Choose)
-            #     buy = Cb.Buy()
-            #     form = buy.filling()
-            #     if form:
-            #         root.upload('tb_buy', form)
-            #     # is_running = False
-            #     # is_Log_In = False
-            #     # break
-            # elif task_Choose == 2:
-            #     # print(task_Choose)
-            #     is_quare = True
-            #     while is_quare:
-            #         temp = root.query()
-            #         Sell = Cs.Sell(temp)
-            #         select = Sell.selected
-            #         if select:
-            #             root.db.delete(select)
-            #         is_quare = Sell.is_quare
-            #     # is_Log_In = False
-            #     # break
-            # elif task_Choose == 3:
-            #     # print(task_Choose)
-            #     is_check = True
-            #     while is_check:
-            #         temp = root.query()
-            #         Store = Ccs.Store(temp)
-            #         is_check = Store.is_check
-            # else:
-            #     continue
+# 鼠标左键抬起
+tree.bind('<ButtonRelease-1>', treeviewClick)
 
 
-if __name__ == '__main__':
-    main()
+# 鼠标选中一行回调
+def selectTree(event):
+    for item in tree.selection():
+        print(item)
+        item_text = tree.item(item, "values")
+        print(item_text[0])
+    # item_text = tree.item(tree.selection(), "values")
+    # print(type(item_text))
+    # a = tree.selection()
+    # print(a)
+
+
+# 选中行
+# tree.bind('<<TreeviewSelect>>', selectTree)
+
+window.mainloop()

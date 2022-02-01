@@ -107,20 +107,22 @@ class MyDb(object):
                 dic['金额'] = dic['金额（未税）']
             task = 'insert into tb_store ' \
                    'values({},"{}","{}","{}","{}","{}",' \
-                   '"{}",{},{},{});'.format(dic['序号'],
-                                            dic['往来单位'],
-                                            dic['一级分类'],
-                                            dic['二级分类'],
-                                            dic['商品名称'],
-                                            dic['规格型号'],
-                                            dic['单位'],
-                                            dic['数量'],
-                                            dic['单价'],
-                                            dic['金额'],
-                                            dic['备注/序列号'],
-                                            dic['是否含税'])
+                   '"{}",{},{},{},"{}",{});'.format(dic['序号'],
+                                                    dic['往来单位'],
+                                                    dic['一级分类'],
+                                                    dic['二级分类'],
+                                                    dic['商品名称'],
+                                                    dic['规格型号'],
+                                                    dic['单位'],
+                                                    dic['数量'],
+                                                    dic['单价'],
+                                                    dic['金额'],
+                                                    dic['备注/序列号'],
+                                                    dic['是否含税'])
             print(task)
             self.execute(task)
+        elif method == 'delete':
+            pass
 
 
 def main():

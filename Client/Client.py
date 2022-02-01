@@ -83,6 +83,7 @@ class Windows(object):
             select = Sell.selected
             if select:
                 self.db.delete(select)
+                self.db.refresh_store('delete')
             is_quare = Sell.is_quare
 
     def Click_btn_logout(self):
@@ -106,40 +107,6 @@ def main():
             root = Windows()
             is_Log_In = root.is_Log_In
             is_running = root.is_running
-            # # print(is_Log_In, is_running)
-            # if not is_running and is_Log_In:
-            #     break
-            # task_Choose = root.whichwindows
-            # if task_Choose == 1:
-            #     # print(task_Choose)
-            #     buy = Cb.Buy()
-            #     form = buy.filling()
-            #     if form:
-            #         root.upload('tb_buy', form)
-            #     # is_running = False
-            #     # is_Log_In = False
-            #     # break
-            # elif task_Choose == 2:
-            #     # print(task_Choose)
-            #     is_quare = True
-            #     while is_quare:
-            #         temp = root.query()
-            #         Sell = Cs.Sell(temp)
-            #         select = Sell.selected
-            #         if select:
-            #             root.db.delete(select)
-            #         is_quare = Sell.is_quare
-            #     # is_Log_In = False
-            #     # break
-            # elif task_Choose == 3:
-            #     # print(task_Choose)
-            #     is_check = True
-            #     while is_check:
-            #         temp = root.query()
-            #         Store = Ccs.Store(temp)
-            #         is_check = Store.is_check
-            # else:
-            #     continue
 
 
 if __name__ == '__main__':
