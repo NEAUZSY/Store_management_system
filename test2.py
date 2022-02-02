@@ -1,73 +1,24 @@
-import tkinter as tk
-from tkinter import ttk
-
-window = tk.Tk()
-# 设置窗口大小
-winWidth = 600
-winHeight = 400
-# 获取屏幕分辨率
-screenWidth = window.winfo_screenwidth()
-screenHeight = window.winfo_screenheight()
-
-x = int((screenWidth - winWidth) / 2)
-y = int((screenHeight - winHeight) / 2)
-
-# 设置主窗口标题
-window.title("TreeView参数说明")
-# 设置窗口初始位置在屏幕居中
-window.geometry("%sx%s+%s+%s" % (winWidth, winHeight, x, y))
-# 设置窗口图标
-# 设置窗口宽高固定
-window.resizable(0, 0)
-
-# 定义列的名称
-columns = ("name", "gender", "age")
-tree = ttk.Treeview(window, show="headings", columns=columns, selectmode=tk.BROWSE)
-
-# 设置表格文字居中
-tree.column("name", anchor="center")
-tree.column("gender", anchor="center")
-tree.column("age", anchor="center")
-
-# 设置表格头部标题
-tree.heading("name", text="姓名")
-tree.heading("gender", text="性别")
-tree.heading("age", text="年龄")
-
-# 设置表格内容
-lists = [{"name": "yang", "gender": "男", "age": "18"}, {"name": "郑", "gender": "女", "age": "25"}]
-i = 0
-for v in lists:
-    tree.insert('', i, values=(v.get("name"), v.get("gender"), v.get("age")))
-    i += 1
-
-tree.pack(expand=True, fill=tk.BOTH)
+from tkinter import filedialog
+import tkinter
 
 
-# 获取当前点击行的值
-def treeviewClick(event):  # 单击
-    for item in tree.selection():
-        item_text = tree.item(item, "values")
-        print(item_text)
+# 定义文件路径选择时间
+def Button_command():
+    # Folderpath = filedialog.askdirectory()  # 获得选择好的文件夹
+    Filepath = filedialog.askopenfilename()  # 获得选择好的文件
+
+    t1 = tkinter.StringVar()
+    t1.set(Filepath)
+    entry = tkinter.Entry(root1, textvariable=t1).place(x=80, y=15)
+    print(t1.get())
 
 
-# 鼠标左键抬起
-tree.bind('<ButtonRelease-1>', treeviewClick)
-
-
-# 鼠标选中一行回调
-def selectTree(event):
-    for item in tree.selection():
-        print(item)
-        item_text = tree.item(item, "values")
-        print(item_text[0])
-    # item_text = tree.item(tree.selection(), "values")
-    # print(type(item_text))
-    # a = tree.selection()
-    # print(a)
-
-
-# 选中行
-# tree.bind('<<TreeviewSelect>>', selectTree)
-
-window.mainloop()
+if __name__ == '__main__':
+    root1 = tkinter.Tk()
+    root1.geometry('300x400')
+    root1.wm_title('GUI')
+    label0 = tkinter.Label(root1, text='文件路径：')
+    label0.place(x=10, y=10)
+    t2 = tkinter.Entry(root1, width=20).place(x=80, y=15)
+    btn = tkinter.Button(root1, text='...', width=2, height=1, command=Button_command).place(x=240, y=10)
+    root1.mainloop()
