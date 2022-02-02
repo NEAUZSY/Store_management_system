@@ -14,6 +14,7 @@ info = [
 
 class Sell(object):
     def __init__(self, info_):
+        # 输入为当前tb_store中的库存表
 
         self.public_info = tk.Tk()  # 创建获取往来单位和日期信息的窗口
         tt = datetime.now().strftime('%Y-%m-%d')
@@ -30,6 +31,8 @@ class Sell(object):
 
         self.sell = True
         self.is_selected = True
+        self.info_list = []  # 在第三集窗口中储存信息的列表
+        self.sell_dic_list = [] # 用来存放出库信息的字典列表 元素师包含某个商品的全部出库信息的字典
         self.public_info_get()
 
         if self.sell:
@@ -37,12 +40,11 @@ class Sell(object):
             self.info_ = info_
             self.win = tk.Tk()  # 窗口
             self.is_quare = True
-            self.selected = ''
-            self.item_list = ''
+            self.selected_id = ''
+            self.item_list = ''  # 选中了的商品列表 内容为id和名称
             self.root_init()
 
-            if self.selected:
-                self.info_list = []  # 在第三集窗口中储存信息的列表
+            if self.selected_id:
                 self.value_info = tk.Tk()  # 创建获取往来单位和日期信息的窗口
                 self.value_info_get()
 
@@ -174,7 +176,8 @@ class Sell(object):
         def plot_tree(lists):
             i = 0
             for i, data in enumerate(lists):
-                tree.insert('', i, values=(data[0], data[1], data[2]))
+                # print(data)
+                tree.insert('', i, values=(data[0], data[1], data[2], data[3]))
                 i += 1
             tree.pack(expand=True, fill=BOTH)
 
@@ -182,13 +185,15 @@ class Sell(object):
         screenheight = self.value_info.winfo_screenheight()  # 屏幕高度
         width = 600
         height = 130 + len(self.item_list) * 50
-        print(height)
+        # print(height)
         x = int((screenwidth - width) / 2)
         y = int((screenheight - height) / 2)
         self.value_info.geometry('{}x{}+{}+{}'.format(width, height, x, y))  # 大小以及位置
+        self.value_info.title('价格信息录入')
 
-        columns = ("name", "quantity", "value")
+        columns = ("id", "name", "quantity", "value")
         tree = ttk.Treeview(self.value_info, show="headings", columns=columns, selectmode=BROWSE)
+        tree.column("id", anchor=CENTER)
         tree.column("name", anchor=CENTER)
         tree.column("quantity", anchor=CENTER)
         tree.column("value", anchor=CENTER)
@@ -199,22 +204,63 @@ class Sell(object):
         # tree.column("age")
 
         # 设置表格头部标题
+        tree.heading("id", text="商品编号")
         tree.heading("name", text="商品名称")
         tree.heading("quantity", text="数量")
         tree.heading("value", text="金额")
 
         select_lists = []
         for rows in self.info_:
-            if rows[0] in self.item_list:
-                select_lists.append(rows[4])
+            if str(rows[0]) in self.item_list:
+                select_lists.append([rows[0], rows[4]])
 
-        self.info_list = [[i, 0, 0] for i in select_lists]
+        self.info_list = [[i[0], i[1], 0, 0] for i in select_lists]
+        # 生成显示列表 用于在金额窗口中输入和暂存金额
 
         # print(select_lists)
         plot_tree(self.info_list)
         tree.bind('<ButtonRelease-1>', self.treeviewClick)
         self.tree = tree
+
+        def Back(master):
+            master.destroy()
+
+        btn_back = Button(self.value_info, text="返回", command=lambda: Back(self.value_info))
+        btn_back.place(x=150, y=height - 50)
+
+        btn_sell = Button(self.value_info, text="确认", command=self.sell_submit)
+        btn_sell.place(x=350, y=height - 50)
+
         self.value_info.mainloop()
+
+    def sell_submit(self):
+        # print(self.info_list)
+        data = "{}-{}-{}".format(self.var_yy.get(), self.var_mm.get(), self.var_dd.get())
+        for rows in self.info_:
+            if str(rows[0]) in self.item_list:
+                # 在库存中选出呗选中的商品
+                # print(rows)
+                # 生成一个储存单个出库信息的字典
+                dic = {'序号': rows[0],
+                       '日期': data,
+                       '往来单位': self.target.get(),
+                       '一级分类': rows[3],
+                       '二级分类': rows[4],
+                       '商品名称': rows[5],
+                       '规格型号': rows[6],
+                       '单位': rows[7],
+                       '数量': self.quantity.get(),
+                       '单价': float(self.value.get()) / float(self.quantity.get()),
+                       '金额': self.value.get(),
+                       '备注/序列号': rows[11],
+                       '是否含税': 1}
+                self.sell_dic_list.append(dic)
+        # print(self.sell_dic_list)
+        try:
+            self.value_info.destroy()
+            self.public_info.destroy()
+        except Exception as e:
+            print(e)
 
     def treeviewClick(self, event):  # 单击
         # for item in self.tree.selection():
@@ -236,12 +282,9 @@ class Sell(object):
         y = int((screenHeight - winHeight) / 2)
 
         # 设置主窗口标题
-        one_info.title("商品信息录入")
+        one_info.title("单品价格录入")
         # 设置窗口初始位置在屏幕居中
         one_info.geometry("%sx%s+%s+%s" % (winWidth, winHeight, x, y))
-
-
-
         lb_quantity = tk.Label(one_info, bg='#DDEBF7', font=('Arial', 12), text='数量')
         lb_value = tk.Label(one_info, bg='#DDEBF7', font=('Arial', 12), text='金额')
         lb_quantity.place(x=10, y=20)
@@ -256,11 +299,12 @@ class Sell(object):
         def cancle():
             one_info.destroy()
 
-        def confirm():
-            self.confirm_self(one_info, En_quantity.get(), En_value.get())
+        # def confirm():
+        #     Sell.confirm_self(one_info, En_quantity.get(), En_value.get())
 
         btn_cancle = tk.Button(one_info, text="取消", command=cancle)
-        btn_confirm = tk.Button(one_info, text="确认", command=confirm)
+        btn_confirm = tk.Button(one_info, text="确认",
+                                command=lambda: self.confirm_self(one_info, En_quantity.get(), En_value.get()))
 
         btn_cancle.place(x=60, y=120)
         btn_confirm.place(x=180, y=120)
@@ -270,9 +314,9 @@ class Sell(object):
     def confirm_self(self, master, quantity, value):
         master.destroy()
         for i, data in enumerate(self.info_list):
-            if data[0] == self.item_text[0]:
-                self.info_list[i][1] = quantity
-                self.info_list[i][2] = value
+            if str(data[0]) == self.item_text[0]:
+                self.info_list[i][2] = quantity
+                self.info_list[i][3] = value
 
         x = self.tree.get_children()
         for item in x:
@@ -280,15 +324,14 @@ class Sell(object):
 
         i = 0
         for i, data in enumerate(self.info_list):
-            self.tree.insert('', i, values=(data[0], data[1], data[2]))
+            self.tree.insert('', i, values=(data[0], data[1], data[2], data[3]))
             i += 1
         self.tree.pack(expand=True, fill=BOTH)
 
-
     def Sell(self):
-        a = messagebox.askokcancel('出库确认', '您是否要要将编号为 %s 的商品出库出库？' % self.selected)  # 弹出对话框
+        a = messagebox.askokcancel('出库确认', '您是否要要将编号为 %s 的商品出库出库？' % self.selected_id)  # 弹出对话框
         if a:
-            print(self.selected)
+            # print(self.selected_id)
             self.win.destroy()
             self.is_selected = True
         else:
@@ -305,16 +348,20 @@ class Sell(object):
             item_id = self.table.item(item, "values")[0]
             # print(item_text)
             item_list.append(item_id)
-        selected = ', '.join(item_list)
-        # print(selected)
-        self.selected = selected
+        selected_id = ', '.join(item_list)
+        # print(selected_id)
+        self.selected_id = selected_id
         self.item_list = item_list
+
+    def checkout(self):
+        # 更新出库表
+        pass
 
 
 def Quare(info_):
     quare = Sell(info_)
-    selected = quare.selected
-    return selected
+    selected_id = quare.selected_id
+    return selected_id
 
 
 if __name__ == '__main__':

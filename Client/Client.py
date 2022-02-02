@@ -80,10 +80,14 @@ class Windows(object):
         while is_quare:
             temp = self.db.query('tb_store')
             Sell = Cs.Sell(temp)
-            select = Sell.selected
+            select = Sell.selected_id
+            # 获取选择状态，是否在库存商品页面进行了选取
             if select:
-                self.db.delete(select)
-                self.db.refresh_store('delete')
+                pass
+                # self.db.delete(select)
+                # self.db.refresh_store('delete')
+            dics = Sell.sell_dic_list
+            self.db.add_sell_info(dics)
             is_quare = Sell.is_quare
 
     def Click_btn_logout(self):

@@ -30,9 +30,7 @@ class MyDb(object):
         default = 0
         if not dic['单位']:
             dic['单位'] = '个'
-
         # keys = 'id，kind，name，source，model，unit，quantity，cost_withtax，cost_withouttax'
-        tt = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         task = 'insert into {} ' \
                'values({},"{}","{}","{}","{}","{}","{}",' \
                '"{}",{},{},{},{},{},"{}",{});'.format(table,
@@ -62,7 +60,7 @@ class MyDb(object):
         if table == 'tb_buy':
             self.execute("select input_what from %s;" % table)
             flags = self.cursor.fetchall()
-            print(flags)
+            # print(flags)
             selects = []
             for flag in flags:
                 if flag[0]:
@@ -93,6 +91,30 @@ class MyDb(object):
         self.delete_id = datas
         self.refresh_store('delete')
 
+    def add_sell_info(self, dics):
+        # 增加sell表数据 输入为包含多个字典的列表
+        for d in dics:
+            task = 'insert into tb_sell ' \
+                   'values({},"{}","{}","{}","{}","{}","{}",' \
+                   '"{}",{},{},{},{},{},"{}",{});'.format(d['序号'],
+                                                          d['日期'],
+                                                          d['往来单位'],
+                                                          d['一级分类'],
+                                                          d['二级分类'],
+                                                          d['商品名称'],
+                                                          d['规格型号'],
+                                                          d['单位'],
+                                                          d['数量'],
+                                                          d['单价'],
+                                                          float(d['单价']) / 1.13,
+                                                          d['金额'],
+                                                          float(d['金额']) / 1.13,
+                                                          d['备注/序列号'],
+                                                          d['是否含税'])
+            print(task)
+            self.execute(task)
+        print('更新出售信息表完成')
+
     def refresh_store(self, method):
         """根据入库信息和出库信息刷新库存单"""
         print('刷新库存', method)
@@ -106,8 +128,9 @@ class MyDb(object):
                 dic['单价'] = dic['单价（未税）']
                 dic['金额'] = dic['金额（未税）']
             task = 'insert into tb_store ' \
-                   'values({},"{}","{}","{}","{}","{}",' \
+                   'values({},"{}","{}","{}","{}","{}","{}",' \
                    '"{}",{},{},{},"{}",{});'.format(dic['序号'],
+                                                    dic['日期'],
                                                     dic['往来单位'],
                                                     dic['一级分类'],
                                                     dic['二级分类'],
