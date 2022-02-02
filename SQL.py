@@ -74,7 +74,7 @@ class MyDb(object):
                         'price_withouttax,value_withouttax,remark from tb_buy where input_what=0;')
             # print(temp)
             for select in selects:
-                print(select)
+                # print(select)
                 self.execute("select %s;" % select)
             temp = self.cursor.fetchall()
             return temp
