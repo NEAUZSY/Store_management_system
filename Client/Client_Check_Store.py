@@ -45,7 +45,7 @@ class Store(object):
         xscroll.pack(side=BOTTOM, fill=X)
         yscroll.config(command=table.yview)
         yscroll.pack(side=RIGHT, fill=Y)
-        print(info_)
+        # print(info_)
         for index, data in enumerate(info_):
             table.insert('', END, values=data)  # 添加数据到末尾
 
@@ -63,7 +63,7 @@ class Store(object):
             item_id = self.table.item(item, "values")[0]
             # print(item_text)
             item_list.append(item_id)
-        print(item_list)
+        # print(item_list)
 
     def Back(self):
         self.is_check = False
