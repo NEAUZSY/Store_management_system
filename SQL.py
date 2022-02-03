@@ -82,6 +82,10 @@ class MyDb(object):
             self.execute("select * from %s;" % table)
             temp = self.cursor.fetchall()
             return temp
+        elif table == 'tb_sell':
+            self.execute("select * from %s;" % table)
+            temp = self.cursor.fetchall()
+            return temp
 
     def delete(self, datas):
         task = 'delete from tb_store where id in ({});'.format(datas)

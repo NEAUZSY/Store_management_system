@@ -2,6 +2,7 @@ from tkinter import *
 import Client_Buy as Cb
 import Client_Login as Cl
 import Client_Check_Buy as Ccb
+import Client_Check_Sell as Ccs
 import Client_Sell as Cs
 from SQL import MyDb
 
@@ -17,7 +18,7 @@ class Windows(object):
         screenwidth = self.root.winfo_screenwidth()  # 屏幕宽度
         screenheight = self.root.winfo_screenheight()  # 屏幕高度
         width = 190
-        height = 300
+        height = 350
         x = int((screenwidth - width) / 2)
         y = int((screenheight - height) / 2)
         self.root.geometry('{}x{}+{}+{}'.format(width, height, x, y))  # 大小以及位置
@@ -32,6 +33,7 @@ class Windows(object):
         btn_quera_buy = Button(self.root, text="入库记录查询", command=self.Click_btn_quera_buy)
         btn_stock = Button(self.root, text="库存查询", command=self.Click_btn_stock)
         btn_sell = Button(self.root, text="出库登记", command=self.Click_btn_sell)
+        btn_quera_sell = Button(self.root, text="出库记录查询", command=self.Click_btn_quera_sell)
         btn_logout = Button(self.root, text="注销", command=self.Click_btn_logout)
         btn_exit = Button(self.root, text="退出", command=self.Click_btn_exit)
 
@@ -40,9 +42,10 @@ class Windows(object):
         btn_quera_buy.place(x=60, y=100)
         btn_stock.place(x=60, y=150)
         btn_sell.place(x=60, y=200)
+        btn_quera_sell.place(x=60, y=250)
 
-        btn_logout.place(x=30, y=250)
-        btn_exit.place(x=110, y=250)
+        btn_logout.place(x=30, y=300)
+        btn_exit.place(x=110, y=300)
         self.root.mainloop()
 
     def Click_btn_pur(self):
@@ -84,11 +87,19 @@ class Windows(object):
             # 获取选择状态，是否在库存商品页面进行了选取
             if select:
                 pass
-                # self.db.delete(select)
-                # self.db.refresh_store('delete')
+                self.db.delete(select)
+                self.db.refresh_store('delete')
             dics = Sell.sell_dic_list
             self.db.add_sell_info(dics)
             is_quare = Sell.is_quare
+
+    def Click_btn_quera_sell(self):
+        # 入库记录查询按钮回调
+        is_check = True
+        while is_check:
+            temp = self.db.query('tb_sell')
+            Sell = Ccs.Sell(temp)
+            is_check = Sell.is_check
 
     def Click_btn_logout(self):
         # 注销
