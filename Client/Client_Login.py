@@ -38,7 +38,7 @@ class LogIn(object):
 
         entry_usr_name = tk.Entry(self.window_Log, textvariable=self.var_usr_name)
         entry_usr_name.place(x=260, y=50)
-        self.var_usr_pwd = tk.StringVar()
+        self.var_usr_pwd = tk.StringVar(value='admin')
         entry_usr_pwd = tk.Entry(self.window_Log, textvariable=self.var_usr_pwd, show='*')
         entry_usr_pwd.place(x=260, y=90)
 

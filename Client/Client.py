@@ -23,7 +23,6 @@ class Windows(object):
         y = int((screenheight - height) / 2)
         self.root.geometry('{}x{}+{}+{}'.format(width, height, x, y))  # 大小以及位置
 
-        self.whichwindows = 0
         # 连接数据库
         lb1 = Label(self.root, text='正在连接数据库……')
         lb1.grid(column=0, row=0)
@@ -50,7 +49,6 @@ class Windows(object):
 
     def Click_btn_pur(self):
         # 入库按钮回调函数
-        self.whichwindows = 1
         self.root.destroy()
         buy = Cb.Buy()
         form = buy.filling()
@@ -59,6 +57,7 @@ class Windows(object):
 
     def Click_btn_quera_buy(self):
         # 入库记录查询按钮回调
+        self.root.destroy()
         is_check = True
         while is_check:
             temp = self.db.query('tb_buy')
@@ -67,7 +66,6 @@ class Windows(object):
 
     def Click_btn_stock(self):
         # 查询库存按钮回调函数
-        self.whichwindows = 3
         self.root.destroy()
         is_check = True
         while is_check:
@@ -77,7 +75,6 @@ class Windows(object):
 
     def Click_btn_sell(self):
         # 出库按钮回调函数
-        self.whichwindows = 2
         self.root.destroy()
         is_quare = True
         while is_quare:
@@ -95,6 +92,7 @@ class Windows(object):
 
     def Click_btn_quera_sell(self):
         # 入库记录查询按钮回调
+        self.root.destroy()
         is_check = True
         while is_check:
             temp = self.db.query('tb_sell')
