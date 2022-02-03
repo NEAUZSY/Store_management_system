@@ -83,7 +83,7 @@ class Windows(object):
         while is_quare:
             temp = self.db.query('tb_store')
             Sell = Cs.Sell(temp)
-            select = Sell.selected_id
+            select = Sell.is_selected
             # 获取选择状态，是否在库存商品页面进行了选取
             if select:
                 pass

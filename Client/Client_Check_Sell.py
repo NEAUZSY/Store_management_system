@@ -18,8 +18,8 @@ class Sell(object):
         self.win.title('库存查询')  # 标题
         screenwidth = self.win.winfo_screenwidth()  # 屏幕宽度
         screenheight = self.win.winfo_screenheight()  # 屏幕高度
-        width = 640
-        height = 480
+        width = 1350
+        height = 500
         x = int((screenwidth - width) / 2)
         y = int((screenheight - height) / 2)
         self.win.geometry('{}x{}+{}+{}'.format(width, height, x, y))  # 大小以及位置
@@ -59,7 +59,7 @@ class Sell(object):
         table.pack(fill=BOTH, expand=True)
         self.table = table
         btn_back = Button(self.win, text="返回", command=self.Back)
-        btn_back.place(x=150, y=400)
+        btn_back.place(x=150, y=440)
 
         self.win.mainloop()
 

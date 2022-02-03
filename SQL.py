@@ -121,7 +121,7 @@ class MyDb(object):
 
     def refresh_store(self, method):
         """根据入库信息和出库信息刷新库存单"""
-        print('刷新库存', method)
+        # print('刷新库存', method)
         if method == 'add':
             dic = self.dic
             if dic['是否含税']:
@@ -146,7 +146,7 @@ class MyDb(object):
                                                     dic['金额'],
                                                     dic['备注/序列号'],
                                                     dic['是否含税'])
-            print(task)
+            # print(task)
             self.execute(task)
         elif method == 'delete':
             pass

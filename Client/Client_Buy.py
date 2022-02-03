@@ -173,14 +173,20 @@ class Buy(object):
         self.forms = En1, En2, En3, En4, En5, En6, En7, En8, En9, En10, root  # , is_with_tax
 
         btn_finsh = tk.Button(root, text="本地导入", command=self.import_batch)
-        btn_finsh.place(x=80, y=500)
+        btn_finsh.place(x=60, y=500)
+
+        btn_back = tk.Button(root, text="返回", command=self.back)
+        btn_back.place(x=150, y=500)
 
         btn_finsh = tk.Button(root, text="确认", command=self.add_purchase)
-        btn_finsh.place(x=200, y=500)
+        btn_finsh.place(x=220, y=500)
 
     def import_batch(self):
         self.root.destroy()
         myimport = Import_Datas()
+
+    def back(self):
+        self.root.destroy()
 
     def add_purchase(self):
         goods_id = self.max_id + 1

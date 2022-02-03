@@ -3,7 +3,11 @@ import tkinter
 from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk
-
+info = [
+    ['1001', '李华', '男', '2014-01-25', '广东', '计算5班', ],
+    ['1002', '小米', '男', '2015-11-08', '深圳', '计算5班', ],
+    ['1003', '刘亮', '男', '2015-09-12', '福建', '计算5班', ],
+    ['1004', '白鸽', '女', '2016-04-01', '湖南', '计算5班', ]]
 
 class Store(object):
     def __init__(self, info_):
@@ -12,8 +16,8 @@ class Store(object):
         self.win.title('库存查询')  # 标题
         screenwidth = self.win.winfo_screenwidth()  # 屏幕宽度
         screenheight = self.win.winfo_screenheight()  # 屏幕高度
-        width = 640
-        height = 480
+        width = 1350
+        height = 500
         x = int((screenwidth - width) / 2)
         y = int((screenheight - height) / 2)
         self.win.geometry('{}x{}+{}+{}'.format(width, height, x, y))  # 大小以及位置
@@ -53,7 +57,7 @@ class Store(object):
         table.pack(fill=BOTH, expand=True)
         self.table = table
         btn_back = Button(self.win, text="返回", command=self.Back)
-        btn_back.place(x=150, y=400)
+        btn_back.place(x=150, y=440)
 
         self.win.mainloop()
 

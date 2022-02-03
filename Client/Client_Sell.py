@@ -15,7 +15,8 @@ info = [
 class Sell(object):
     def __init__(self, info_):
         # 输入为当前tb_store中的库存表
-
+        self.is_selected = True
+        self.is_quare = True
         self.public_info = tk.Tk()  # 创建获取往来单位和日期信息的窗口
         tt = datetime.now().strftime('%Y-%m-%d')
         yy = tt[0:4]
@@ -30,7 +31,7 @@ class Sell(object):
         self.value = tk.StringVar(value=100)  # 出库商品单价
 
         self.sell = True
-        self.is_selected = True
+
         self.info_list = []  # 在第三集窗口中储存信息的列表
         self.sell_dic_list = [] # 用来存放出库信息的字典列表 元素师包含某个商品的全部出库信息的字典
         self.public_info_get()
@@ -169,6 +170,7 @@ class Sell(object):
 
     def info_back(self):
         self.public_info.destroy()
+        self.is_quare = False
         self.sell = False
 
     def value_info_get(self):
@@ -184,7 +186,7 @@ class Sell(object):
         screenwidth = self.value_info.winfo_screenwidth()  # 屏幕宽度
         screenheight = self.value_info.winfo_screenheight()  # 屏幕高度
         width = 600
-        height = 130 + len(self.item_list) * 50
+        height = 130 + len(self.item_list) * 10
         # print(height)
         x = int((screenwidth - width) / 2)
         y = int((screenheight - height) / 2)
@@ -360,7 +362,7 @@ class Sell(object):
 
 def Quare(info_):
     quare = Sell(info_)
-    selected_id = quare.selected_id
+    selected_id = quare.is_selected
     return selected_id
 
 
