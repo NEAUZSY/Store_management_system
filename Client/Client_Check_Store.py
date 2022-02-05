@@ -3,11 +3,13 @@ import tkinter
 from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk
+
 info = [
-    ['1001', '李华', '男', '2014-01-25', '广东', '计算5班', ],
-    ['1002', '小米', '男', '2015-11-08', '深圳', '计算5班', ],
-    ['1003', '刘亮', '男', '2015-09-12', '福建', '计算5班', ],
-    ['1004', '白鸽', '女', '2016-04-01', '湖南', '计算5班', ]]
+    ['1001', '李华', '男', '2014-01-25', '广东', '计算5班', '1001', '李华', '男', '2014-01-25', 1, '计算5班'],
+    ['1002', '小米', '男', '2015-11-08', '深圳', '计算5班', '1002', '小米', '男', '2015-11-08', 2, '计算5班'],
+    ['1003', '刘亮', '男', '2015-09-12', '福建', '计算5班', '1003', '刘亮', '男', '2015-09-12', 3, '计算5班'],
+    ['1004', '白鸽', '女', '2016-04-01', '湖南', '计算5班', '1004', '白鸽', '女', '2016-04-01', 4, '计算5班']]
+
 
 class Store(object):
     def __init__(self, info_):
@@ -50,14 +52,24 @@ class Store(object):
         yscroll.config(command=table.yview)
         yscroll.pack(side=RIGHT, fill=Y)
         # print(info_)
+
+        sum_value = 0
         for index, data in enumerate(info_):
             table.insert('', END, values=data)  # 添加数据到末尾
+            sum_value += float(data[10])
+        print(sum_value)
 
         table.bind('<<TreeviewSelect>>', self.selectTree)
         table.pack(fill=BOTH, expand=True)
         self.table = table
         btn_back = Button(self.win, text="返回", command=self.Back)
         btn_back.place(x=150, y=440)
+
+        self.value_sum = tkinter.StringVar(value='库存总额: ' + str(sum_value))
+
+        lb_sum = tkinter.Label(self.win, font=('Arial', 12),
+                               textvariable=self.value_sum)
+        lb_sum.place(x=300, y=440)
 
         self.win.mainloop()
 

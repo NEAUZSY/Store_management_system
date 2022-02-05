@@ -90,7 +90,7 @@ class MyDb(object):
     def delete(self, datas):
         task = 'delete from tb_store where id in ({});'.format(datas)
         self.execute(task)
-        # print(task)
+        print(task)
         # print('出库成功')
         self.delete_id = datas
         self.refresh_store('delete')
@@ -115,7 +115,7 @@ class MyDb(object):
                                                           float(d['金额']) / 1.13,
                                                           d['备注/序列号'],
                                                           d['是否含税'])
-            print(task)
+            # print(task)
             self.execute(task)
         print('更新出售信息表完成')
 

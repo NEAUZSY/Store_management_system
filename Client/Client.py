@@ -2,7 +2,8 @@ from tkinter import *
 import Client_Buy as Cb
 import Client_Login as Cl
 import Client_Check_Buy as Ccb
-import Client_Check_Sell as Ccs
+import Client_Check_Sell as CCSell
+import Client_Check_Store as CCStore
 import Client_Sell as Cs
 from SQL import MyDb
 
@@ -70,7 +71,7 @@ class Windows(object):
         is_check = True
         while is_check:
             temp = self.db.query('tb_store')
-            Store = Ccb.Store(temp)
+            Store = CCStore.Store(temp)
             is_check = Store.is_check
 
     def Click_btn_sell(self):
@@ -80,10 +81,10 @@ class Windows(object):
         while is_quare:
             temp = self.db.query('tb_store')
             Sell = Cs.Sell(temp)
-            select = Sell.is_selected
+            select = Sell.selected_id
             # 获取选择状态，是否在库存商品页面进行了选取
             if select:
-                pass
+                print('删除了所选内容')
                 self.db.delete(select)
                 self.db.refresh_store('delete')
             dics = Sell.sell_dic_list
@@ -96,7 +97,7 @@ class Windows(object):
         is_check = True
         while is_check:
             temp = self.db.query('tb_sell')
-            Sell = Ccs.Sell(temp)
+            Sell = CCSell.Sell(temp)
             is_check = Sell.is_check
 
     def Click_btn_logout(self):

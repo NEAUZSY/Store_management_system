@@ -18,6 +18,7 @@ class Sell(object):
         self.is_selected = True
         self.is_quare = True
         self.public_info = tk.Tk()  # 创建获取往来单位和日期信息的窗口
+        self.selected_id = ''   # 出库的商品id
         tt = datetime.now().strftime('%Y-%m-%d')
         yy = tt[0:4]
         mm = tt[5:7]
@@ -41,7 +42,7 @@ class Sell(object):
             self.info_ = info_
             self.win = tk.Tk()  # 窗口
             self.is_quare = True
-            self.selected_id = ''
+
             self.item_list = ''  # 选中了的商品列表 内容为id和名称
             self.root_init()
 
@@ -362,7 +363,7 @@ class Sell(object):
 
 def Quare(info_):
     quare = Sell(info_)
-    selected_id = quare.is_selected
+    selected_id = quare.selected_id
     return selected_id
 
 
