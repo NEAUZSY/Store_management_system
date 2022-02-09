@@ -22,7 +22,7 @@ class Import_Datas(object):
         self.root.title('选择要导入的文件')
         label = tk.Label(self.root, text='文件路径：')
         label.place(x=10, y=10)
-        self.path = tk.StringVar(value=r'C:\Users\NEAUZSY\Desktop\大类_唐山迈拓科技有限公司.xlsx')  # 创建文件路径变量
+        self.path = tk.StringVar(value=r'C:\Users\NEAUZSY\Desktop\实验数据.xlsx')  # 创建文件路径变量
 
         enter = tk.Entry(self.root, width=30, textvariable=self.path)  # 创建显示文件路径的输入框
         enter.place(x=80, y=15)
@@ -71,8 +71,8 @@ class Import_Datas(object):
     def Import_Data(self):
         for i, row in enumerate(self.ws.values):
             if i >= 1:
+                print(row)
                 # 格式化数据称为能直接放到SQL语句中的字符串
-
                 data_list = [str(i) for i in list(row)]
                 data_buy = '"' + '", "'.join([i for i in data_list]) + '"'
                 task_buy = 'insert into tb_buy values(%s);' % data_buy
