@@ -16,15 +16,13 @@ class MyDb(object):
 
     def execute(self, task):
         # 执行SQL语句 以字符串形式传入
+        # self.cursor.execute("use Finance_DB;")
+        self.cursor = self.db.cursor()
         try:
             self.cursor.execute(task)
             self.cursor.connection.commit()
-            return self.cursor.fetchall()
-        except Exception as e:
-            # print(e)
+        except:
             self.db.rollback()
-            return e
-
         # self.cursor.close()
 
     def upload(self, table, dic):
@@ -120,23 +118,6 @@ class MyDb(object):
             # print(task)
             self.execute(task)
         print('更新出售信息表完成')
-
-    def reduce(self, dics, store):
-        """
-        修改库存，用于部分出库
-        :param dics: 出库商品的字典列表
-        :param store: 之前的库存信息
-        :return:
-        """
-        # 在收到的更新列表中遍历
-        for i, dic_ in enumerate(dics):
-            if dic_['数量'] == store[i][2]:
-                # 如果出库数量和库存数量相等，择删除该商品
-                task = 'delete from tb_store where id={};'.format(store[i][0])
-            else:
-                left = float(store[i][2]) - float(dic_['数量'])
-                task = 'UPDATE tb_store SET quantity={} WHERE id={};'.format(left, store[i][0])
-            self.execute(task)
 
     def refresh_store(self, method):
         """根据入库信息和出库信息刷新库存单"""
