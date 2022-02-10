@@ -16,13 +16,15 @@ class MyDb(object):
 
     def execute(self, task):
         # 执行SQL语句 以字符串形式传入
-        # self.cursor.execute("use Finance_DB;")
-        self.cursor = self.db.cursor()
         try:
             self.cursor.execute(task)
             self.cursor.connection.commit()
-        except:
+            return self.cursor.fetchall()
+        except Exception as e:
+            # print(e)
             self.db.rollback()
+            return e
+
         # self.cursor.close()
 
     def upload(self, table, dic):
