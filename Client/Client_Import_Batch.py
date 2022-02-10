@@ -32,10 +32,10 @@ class Import_Datas(object):
         btn_select.place(x=310, y=10)
 
         btn_confirm = tk.Button(self.root, text='返回', width=4, height=1, command=self.Click_back)
-        btn_confirm.place(x=100, y=90)
+        btn_confirm.place(x=200, y=90)
 
         btn_back = tk.Button(self.root, text='确认', width=4, height=1, command=self.Click_confirm)
-        btn_back.place(x=200, y=90)
+        btn_back.place(x=100, y=90)
 
         self.is_return = False
 
@@ -77,6 +77,7 @@ class Import_Datas(object):
                 data_buy = '"' + '", "'.join([i for i in data_list]) + '"'
                 task_buy = 'insert into tb_buy values(%s);' % data_buy
                 result = self.db.execute(task_buy)
+
                 store_list = data_list[0:9]
                 if data_list[-1] == "1":
                     # 含税 库存中单价和金额存储为含税项
@@ -87,8 +88,12 @@ class Import_Datas(object):
                 data_store = '"' + '", "'.join([i for i in store_list]) + '"'
                 task_store = 'insert into tb_store values(%s);' % data_store
 
+                # print(task_store)
+                print(task_buy)
+
                 result = self.db.execute(task_store)
-                print('已经完成了 %d 行数据的导入' % i)
+                # print('已经完成了 %d 行数据的导入' % i)
+                # print('已经完成了 %d 行数据的导入' % i)
 
 
 

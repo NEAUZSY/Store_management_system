@@ -119,10 +119,10 @@ class Sell(object):
         self.table = table
 
         btn_sell = Button(self.win, text="下一步", command=self.Sell)
-        btn_sell.place(x=50, y=400)
+        btn_sell.place(x=150, y=400)
 
         btn_back = Button(self.win, text="退出", command=self.Back)
-        btn_back.place(x=150, y=400)
+        btn_back.place(x=50, y=400)
 
         self.win.mainloop()
 
@@ -182,10 +182,10 @@ class Sell(object):
         En1.place(x=110, y=90)
 
         btn_finsh = tk.Button(self.public_info, text="确认", command=self.check_input)
-        btn_finsh.place(x=100, y=130)
+        btn_finsh.place(x=200, y=130)
 
         btn_back = tk.Button(self.public_info, text="返回", command=self.info_back)
-        btn_back.place(x=200, y=130)
+        btn_back.place(x=100, y=130)
 
         self.public_info.mainloop()
 
@@ -255,10 +255,10 @@ class Sell(object):
             master.destroy()
 
         btn_back = Button(self.value_info, text="返回", command=lambda: Back(self.value_info))
-        btn_back.place(x=150, y=height - 50)
+        btn_back.place(x=350, y=height - 50)
 
         btn_sell = Button(self.value_info, text="确认", command=self.sell_submit)
-        btn_sell.place(x=350, y=height - 50)
+        btn_sell.place(x=150, y=height - 50)
         self.value_info.mainloop()
 
     def sell_submit(self):
@@ -362,7 +362,7 @@ class Sell(object):
             if str(data[0]) == self.item_select[0]:
                 self.item_list[i][2] = quantity
                 self.item_list[i][3] = value
-        print('显示：', self.item_list)
+        # print('显示：', self.item_list)
 
         # 关闭小窗口
         master.destroy()

@@ -176,10 +176,10 @@ class Buy(object):
         btn_finsh.place(x=60, y=500)
 
         btn_back = tk.Button(root, text="返回", command=self.back)
-        btn_back.place(x=150, y=500)
+        btn_back.place(x=220, y=500)
 
         btn_finsh = tk.Button(root, text="确认", command=self.add_purchase)
-        btn_finsh.place(x=220, y=500)
+        btn_finsh.place(x=150, y=500)
 
     def import_batch(self):
         self.root.destroy()

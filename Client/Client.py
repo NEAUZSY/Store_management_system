@@ -1,11 +1,12 @@
 from tkinter import *
 import Client_Buy as Cb
 import Client_Login as Cl
+import Client_Sell as Cs
 import Client_Check_Buy as Ccb
 import Client_Check_Sell as CCSell
 import Client_Check_Store as CCStore
-import test3 as Cs
 from SQL import MyDb
+# import test3 as Cs
 
 
 class Windows(object):
