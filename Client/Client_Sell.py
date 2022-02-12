@@ -57,13 +57,6 @@ class Sell(object):
                 # 初始化数量金额指定窗口
                 self.value_info_get()
 
-                # print(self.item_store, self.item_list)
-
-                # print('删除了所选内容')
-                # print(self.selected_id)
-                # self.db.delete(self.selected_id)
-                # self.db.refresh_store('delete')
-                # 在数据库中更新内容 添加出库单
                 self.db.add_sell_info(self.sell_dic_list)
                 self.db.reduce(self.sell_dic_list, self.item_store)
                 print(self.sell_dic_list)

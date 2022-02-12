@@ -128,7 +128,7 @@ class MyDb(object):
         """
         # 在收到的更新列表中遍历
         for i, dic_ in enumerate(dics):
-            if dic_['数量'] == store[i][2]:
+            if str(dic_['数量']) == str(store[i][2]):
                 # 如果出库数量和库存数量相等，择删除该商品
                 task = 'delete from tb_store where id={};'.format(store[i][0])
             else:
