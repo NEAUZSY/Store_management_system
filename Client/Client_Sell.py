@@ -31,9 +31,6 @@ class Sell(object):
         self.var_dd = StringVar(value=dd)
         self.target = StringVar(value='')
 
-        self.quantity = StringVar(value=0)  # 出库商品数量
-        self.value = StringVar(value=0)  # 出库商品单价
-
         self.value_sum = StringVar(value='')  # 出库商品总价
 
         self.sell = True
@@ -260,14 +257,14 @@ class Sell(object):
 
     def sell_submit(self):
         """出售提交函数，在金额数量选择窗口处点击确认按钮后的回调函数"""
-        # print(self.info_list)
-        # print(self.item_list)
         data = "{}-{}-{}".format(self.var_yy.get(), self.var_mm.get(), self.var_dd.get())
-        print(self.quantity.get(), self.value.get())
         # 遍历外部传入的列表 此处为所有库存
+        print(self.item_list)
+        i = 0
         for rows in self.info_:
             # 定位到某一个存在于被选择列表中的商品
             if str(rows[0]) in self.selected_id:
+
                 # 生成一个储存单个出库信息的字典
                 dic = {'序号': rows[0],
                        '日期': data,
@@ -277,12 +274,13 @@ class Sell(object):
                        '商品名称': rows[5],
                        '规格型号': rows[6],
                        '单位': rows[7],
-                       '数量': self.quantity.get(),
-                       '单价': '%.2f' % (float(self.value.get()) / float(self.quantity.get())),
-                       '金额': self.value.get(),
+                       '数量': self.item_list[i][2],
+                       '单价': '%.2f' % (float(self.item_list[i][3]) / float(self.item_list[i][2])),
+                       '金额': self.item_list[i][3],
                        '备注/序列号': rows[11],
                        '是否含税': 1}
                 self.sell_dic_list.append(dic)
+                i += 1
         # print(self.sell_dic_list)
         try:
             self.value_info.destroy()
@@ -291,9 +289,7 @@ class Sell(object):
             print(e)
 
     def treeviewClick(self, event):  # 单击
-        # for item in self.tree.selection():
-        #     item_text = self.tree.item(item, "values")
-        #     print(item_text)
+
         # 获取点击的商品
         item = self.tree.selection()
         self.item_select = self.tree.item(item, "values")
@@ -313,41 +309,34 @@ class Sell(object):
         one_info.title("单品价格录入")
         # 设置窗口初始位置在屏幕居中
         one_info.geometry("%sx%s+%s+%s" % (winWidth, winHeight, x, y))
-        lb_quantity = Label(one_info, bg='#DDEBF7', font=('Arial', 12), text='数量')
-        lb_value = Label(one_info, bg='#DDEBF7', font=('Arial', 12), text='金额')
+        lb_quantity = Label(one_info, font=('Arial', 12), text='数量')
+        lb_value = Label(one_info, font=('Arial', 12), text='金额')
         lb_quantity.place(x=10, y=20)
         lb_value.place(x=140, y=20)
 
-        En_quantity = Entry(one_info, textvariable=self.quantity, bd=2, justify='center', width=10, bg='#DDEBF7')
-        En_value = Entry(one_info, textvariable=self.value, bd=2, justify='center', width=10, bg='#DDEBF7')
+        # print(self.quantity.get(), self.value.get())
+
+        En_quantity = Entry(one_info, bd=2, justify='center', width=10)
+        En_value = Entry(one_info, bd=2, justify='center', width=10)
+
+        En_quantity.insert(0, self.item_select[2])
+        En_value.insert(0, self.item_select[3])
 
         En_quantity.place(x=60, y=20)
         En_value.place(x=180, y=20)
 
-        # 小窗口的取消按钮回调函数
-        def cancle():
-            one_info.destroy()
-
-        # def confirm():
-        #     Sell.confirm_self(one_info, En_quantity.get(), En_value.get())
-
-        btn_cancle = Button(one_info, text="取消", command=cancle)
+        btn_cancle = Button(one_info, text="取消", command=one_info.destroy)
         btn_confirm = Button(one_info, text="确认",
                              # 确认函数传入参数包括窗口对象和窗口中几个输入框的值
                              command=lambda: self.confirm_self(one_info, En_quantity.get(), En_value.get()))
 
-        btn_cancle.place(x=60, y=120)
-        btn_confirm.place(x=180, y=120)
+        btn_cancle.place(x=60, y=100)
+        btn_confirm.place(x=180, y=100)
 
         one_info.mainloop()
 
     def confirm_self(self, master, quantity, value):
 
-        # print('储存：', self.item_store)
-        # print(self.item_select)
-        # 在被选择的商品列表中循环
-        self.quantity.set(quantity)
-        self.value.set(value)
         for i, data in enumerate(self.item_list):
             if float(quantity) > float(self.item_store[i][2]):
                 # 如果输入的出库数量大于库存数量择退出本次输入
