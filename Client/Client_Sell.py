@@ -1,5 +1,4 @@
 # -*- encoding=utf-8 -*-
-import tkinter as tk
 from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk
@@ -21,19 +20,21 @@ class Sell(object):
         # 输入为当前tb_store中的库存表
         self.is_selected = True
         self.is_quare = True
-        self.public_info = tk.Tk()  # 创建获取往来单位和日期信息的窗口
+        self.public_info = Tk()  # 创建获取往来单位和日期信息的窗口
         self.selected_id = []  # 出库的商品id
         tt = datetime.now().strftime('%Y-%m-%d')
         yy = tt[0:4]
         mm = tt[5:7]
         dd = tt[8:10]
-        self.var_yy = tk.StringVar(value=yy)
-        self.var_mm = tk.StringVar(value=mm)
-        self.var_dd = tk.StringVar(value=dd)
-        self.target = tk.StringVar(value='')
+        self.var_yy = StringVar(value=yy)
+        self.var_mm = StringVar(value=mm)
+        self.var_dd = StringVar(value=dd)
+        self.target = StringVar(value='')
 
-        self.quantity = tk.StringVar(value=100)  # 出库商品数量
-        self.value = tk.StringVar(value=100)  # 出库商品单价
+        self.quantity = StringVar(value=0)  # 出库商品数量
+        self.value = StringVar(value=0)  # 出库商品单价
+
+        self.value_sum = StringVar(value='')  # 出库商品总价
 
         self.sell = True
 
@@ -46,7 +47,7 @@ class Sell(object):
         if self.sell:
             # 完成了基本信息的录入 往来单位和出库时间
             self.info_ = info_
-            self.win = tk.Tk()  # 窗口
+            self.win = Tk()  # 窗口
             self.is_quare = True
 
             self.item_list = ''  # 选中了的商品列表 内容为id 名称 数量和金额
@@ -55,7 +56,7 @@ class Sell(object):
 
             # 如果在商品选择窗口进行了选择
             if self.is_selected:
-                self.value_info = tk.Tk()  # 创建获取往来单位和日期信息的窗口
+                self.value_info = Tk()  # 创建获取往来单位和日期信息的窗口
                 # 初始化数量金额指定窗口
                 self.value_info_get()
 
@@ -75,13 +76,13 @@ class Sell(object):
         self.win.title('库存查询')  # 标题
         screenwidth = self.win.winfo_screenwidth()  # 屏幕宽度
         screenheight = self.win.winfo_screenheight()  # 屏幕高度
-        width = 640
-        height = 480
+        width = 1300
+        height = 500
         x = int((screenwidth - width) / 2)
         y = int((screenheight - height) / 2)
         self.win.geometry('{}x{}+{}+{}'.format(width, height, x, y))  # 大小以及位置
 
-        tabel_frame = tk.Frame(self.win)
+        tabel_frame = Frame(self.win)
         tabel_frame.pack()
 
         xscroll = Scrollbar(tabel_frame, orient=HORIZONTAL)
@@ -138,54 +139,54 @@ class Sell(object):
         self.public_info.geometry('{}x{}+{}+{}'.format(width, height, x, y))  # 大小以及位置
 
         self.public_info.configure(bg='#DDEBF7')
-        title = tk.Label(self.public_info,
-                         bg='#DDEBF7',
-                         font=('Arial', 16),
-                         text='商品出库')
+        title = Label(self.public_info,
+                      bg='#DDEBF7',
+                      font=('Arial', 16),
+                      text='商品出库')
         title.place(x=110, y=20)
 
-        lb_yy = tk.Label(self.public_info,
-                         bg='#DDEBF7',
-                         font=('Arial', 12),
-                         text='年')
+        lb_yy = Label(self.public_info,
+                      bg='#DDEBF7',
+                      font=('Arial', 12),
+                      text='年')
         lb_yy.place(x=150, y=60)
 
-        lb_mm = tk.Label(self.public_info,
-                         bg='#DDEBF7',
-                         font=('Arial', 12),
-                         text='月')
+        lb_mm = Label(self.public_info,
+                      bg='#DDEBF7',
+                      font=('Arial', 12),
+                      text='月')
         lb_mm.place(x=195, y=60)
 
-        lb_dd = tk.Label(self.public_info,
-                         bg='#DDEBF7',
-                         font=('Arial', 12),
-                         text='日')
+        lb_dd = Label(self.public_info,
+                      bg='#DDEBF7',
+                      font=('Arial', 12),
+                      text='日')
         lb_dd.place(x=240, y=60)
 
-        En_yy = tk.Entry(self.public_info, textvariable=self.var_yy, bd=2, justify='center', width=6, bg='#DDEBF7',
-                         relief="flat")
+        En_yy = Entry(self.public_info, textvariable=self.var_yy, bd=2, justify='center', width=6, bg='#DDEBF7',
+                      relief="flat")
         En_yy.place(x=105, y=60)
-        En_mm = tk.Entry(self.public_info, textvariable=self.var_mm, bd=2, justify='center', width=3, bg='#DDEBF7',
-                         relief="flat")
+        En_mm = Entry(self.public_info, textvariable=self.var_mm, bd=2, justify='center', width=3, bg='#DDEBF7',
+                      relief="flat")
         En_mm.place(x=170, y=60)
-        En_dd = tk.Entry(self.public_info, textvariable=self.var_dd, bd=2, justify='center', width=3, bg='#DDEBF7',
-                         relief="flat")
+        En_dd = Entry(self.public_info, textvariable=self.var_dd, bd=2, justify='center', width=3, bg='#DDEBF7',
+                      relief="flat")
         En_dd.place(x=215, y=60)
 
-        lb1 = tk.Label(self.public_info,
-                       bg='#DDEBF7',
-                       font=('Arial', 12),
-                       text='往来单位:')
+        lb1 = Label(self.public_info,
+                    bg='#DDEBF7',
+                    font=('Arial', 12),
+                    text='往来单位:')
         lb1.place(x=15, y=90)
 
-        En1 = tk.Entry(self.public_info, textvariable=self.target, bd=2)
+        En1 = Entry(self.public_info, textvariable=self.target, bd=2)
         En1.place(x=110, y=90)
 
-        btn_finsh = tk.Button(self.public_info, text="确认", command=self.check_input)
-        btn_finsh.place(x=200, y=130)
+        btn_finsh = Button(self.public_info, text="确认", command=self.check_input)
+        btn_finsh.place(x=100, y=130)
 
-        btn_back = tk.Button(self.public_info, text="返回", command=self.info_back)
-        btn_back.place(x=100, y=130)
+        btn_back = Button(self.public_info, text="返回", command=self.info_back)
+        btn_back.place(x=200, y=130)
 
         self.public_info.mainloop()
 
@@ -198,14 +199,6 @@ class Sell(object):
         self.sell = False
 
     def value_info_get(self):
-        # 树内容首次更新函数
-        def plot_tree(lists):
-            i = 0
-            for i, data in enumerate(lists):
-                # print(data)
-                tree.insert('', i, values=(data[0], data[1], data[2], data[3]))
-                i += 1
-            tree.pack(expand=True, fill=BOTH)
 
         screenwidth = self.value_info.winfo_screenwidth()  # 屏幕宽度
         screenheight = self.value_info.winfo_screenheight()  # 屏幕高度
@@ -224,28 +217,28 @@ class Sell(object):
         tree.column("quantity", anchor=CENTER)
         tree.column("value", anchor=CENTER)
 
-        # # 设置表格文字居中
-        # tree.column("name")
-        # tree.column("gender")
-        # tree.column("age")
-
         # 设置表格头部标题
         tree.heading("id", text="商品编号")
         tree.heading("name", text="商品名称")
         tree.heading("quantity", text="数量")
         tree.heading("value", text="金额")
 
-        # select_lists = []
-        # for rows in self.info_:
-        #     if str(rows[0]) in self.item_list:
-        #         select_lists.append([rows[0], rows[4]])
-        #
-        # self.info_list = [[i[0], i[1], 0, 0] for i in select_lists]
-        # 生成显示列表 用于在金额窗口中输入和暂存金额
-
-        # print(select_lists)
         # 绘制树
-        plot_tree(self.item_list)
+        value_sum = 0
+        for i, data in enumerate(self.item_list):
+            # print(data)
+            tree.insert('', i, values=(data[0], data[1], data[2], data[3]))
+            i += 1
+            value_sum += float(data[3])
+        tree.pack(expand=True, fill=BOTH)
+
+        # 显示总金额
+        self.value_sum = StringVar()    # 这里需要重新声明才能正常使用
+        self.value_sum.set('出库总额：{}'.format(value_sum))
+
+        display_en = Entry(self.value_info, textvariable=self.value_sum, bd=2, justify='center', width=20, relief="flat")
+        display_en.place(x=400, y=height - 50)
+
         # 金额指定窗口中树的选择回调函数
         tree.bind('<ButtonRelease-1>', self.treeviewClick)
         # 将此窗口属性化
@@ -259,6 +252,10 @@ class Sell(object):
 
         btn_sell = Button(self.value_info, text="确认", command=self.sell_submit)
         btn_sell.place(x=150, y=height - 50)
+
+        # En1 = Entry(self.public_info, textvariable=self.target, bd=2)
+        # En1.place(x=110, y=90)
+
         self.value_info.mainloop()
 
     def sell_submit(self):
@@ -271,7 +268,6 @@ class Sell(object):
         for rows in self.info_:
             # 定位到某一个存在于被选择列表中的商品
             if str(rows[0]) in self.selected_id:
-
                 # 生成一个储存单个出库信息的字典
                 dic = {'序号': rows[0],
                        '日期': data,
@@ -302,7 +298,7 @@ class Sell(object):
         item = self.tree.selection()
         self.item_select = self.tree.item(item, "values")
         # 创建一个单独的信息录入窗口
-        one_info = tk.Tk()
+        one_info = Tk()
 
         winWidth = 300
         winHeight = 150
@@ -317,13 +313,13 @@ class Sell(object):
         one_info.title("单品价格录入")
         # 设置窗口初始位置在屏幕居中
         one_info.geometry("%sx%s+%s+%s" % (winWidth, winHeight, x, y))
-        lb_quantity = tk.Label(one_info, bg='#DDEBF7', font=('Arial', 12), text='数量')
-        lb_value = tk.Label(one_info, bg='#DDEBF7', font=('Arial', 12), text='金额')
+        lb_quantity = Label(one_info, bg='#DDEBF7', font=('Arial', 12), text='数量')
+        lb_value = Label(one_info, bg='#DDEBF7', font=('Arial', 12), text='金额')
         lb_quantity.place(x=10, y=20)
         lb_value.place(x=140, y=20)
 
-        En_quantity = tk.Entry(one_info, textvariable=self.quantity, bd=2, justify='center', width=10, bg='#DDEBF7')
-        En_value = tk.Entry(one_info, textvariable=self.value, bd=2, justify='center', width=10, bg='#DDEBF7')
+        En_quantity = Entry(one_info, textvariable=self.quantity, bd=2, justify='center', width=10, bg='#DDEBF7')
+        En_value = Entry(one_info, textvariable=self.value, bd=2, justify='center', width=10, bg='#DDEBF7')
 
         En_quantity.place(x=60, y=20)
         En_value.place(x=180, y=20)
@@ -335,10 +331,10 @@ class Sell(object):
         # def confirm():
         #     Sell.confirm_self(one_info, En_quantity.get(), En_value.get())
 
-        btn_cancle = tk.Button(one_info, text="取消", command=cancle)
-        btn_confirm = tk.Button(one_info, text="确认",
-                                # 确认函数传入参数包括窗口对象和窗口中几个输入框的值
-                                command=lambda: self.confirm_self(one_info, En_quantity.get(), En_value.get()))
+        btn_cancle = Button(one_info, text="取消", command=cancle)
+        btn_confirm = Button(one_info, text="确认",
+                             # 确认函数传入参数包括窗口对象和窗口中几个输入框的值
+                             command=lambda: self.confirm_self(one_info, En_quantity.get(), En_value.get()))
 
         btn_cancle.place(x=60, y=120)
         btn_confirm.place(x=180, y=120)
@@ -372,8 +368,12 @@ class Sell(object):
         for item in x:
             self.tree.delete(item)
 
+        value_sum = 0
         for i, data in enumerate(self.item_list):
             self.tree.insert('', i, values=(data[0], data[1], data[2], data[3]))
+            value_sum += float(data[3])
+
+        self.value_sum.set('出库总额：{}'.format(value_sum))
         self.tree.pack(expand=True, fill=BOTH)
 
     def Sell(self):

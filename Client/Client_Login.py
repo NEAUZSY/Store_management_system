@@ -1,6 +1,8 @@
 import pickle
+
 import tkinter as tk
 from tkinter import messagebox  # import this to fix messagebox error
+
 
 
 class LogIn(object):
@@ -28,7 +30,10 @@ class LogIn(object):
 
         # welcome image
         canvas = tk.Canvas(self.window_Log, height=240, width=600)
-        image_file = tk.PhotoImage(file='../file/Logo.gif')
+
+        # 注意：如果是"data:image/jpg:base64,"，那你保存的就要以png格式，如果是"data:image/png:base64,"那你保存的时候就以jpg格式。
+
+        image_file = tk.PhotoImage(file='./logo.png')
         canvas.create_image(0, 0, anchor='nw', image=image_file)
         canvas.pack(side='top')
 

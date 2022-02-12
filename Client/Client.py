@@ -5,7 +5,11 @@ import Client_Sell as Cs
 import Client_Check_Buy as Ccb
 import Client_Check_Sell as CCSell
 import Client_Check_Store as CCStore
+import base64, os
+from file.logo import logo
 from SQL import MyDb
+
+
 # import test3 as Cs
 
 
@@ -19,8 +23,8 @@ class Windows(object):
 
         screenwidth = self.root.winfo_screenwidth()  # 屏幕宽度
         screenheight = self.root.winfo_screenheight()  # 屏幕高度
-        width = 190
-        height = 350
+        width = 400
+        height = 250
         x = int((screenwidth - width) / 2)
         y = int((screenheight - height) / 2)
         self.root.geometry('{}x{}+{}+{}'.format(width, height, x, y))  # 大小以及位置
@@ -31,22 +35,36 @@ class Windows(object):
         self.db = MyDb()
         lb1.configure(text='请选择要使用的功能', font=('Arial', 15), )
         btn_pur = Button(self.root, text="入库登记", command=self.Click_btn_pur)
+        btn_sell = Button(self.root, text="出库登记", command=self.Click_btn_sell)
+        btn_clean = Button(self.root, text="清空数据库", command=self.Click_btn_clean)
+
         btn_quera_buy = Button(self.root, text="入库记录查询", command=self.Click_btn_quera_buy)
         btn_stock = Button(self.root, text="库存查询", command=self.Click_btn_stock)
-        btn_sell = Button(self.root, text="出库登记", command=self.Click_btn_sell)
         btn_quera_sell = Button(self.root, text="出库记录查询", command=self.Click_btn_quera_sell)
+
         btn_logout = Button(self.root, text="注销", command=self.Click_btn_logout)
         btn_exit = Button(self.root, text="退出", command=self.Click_btn_exit)
 
-        # 这里需要插入一个费用录入按钮 fee 按钮
-        btn_pur.place(x=60, y=50)
-        btn_quera_buy.place(x=60, y=100)
-        btn_stock.place(x=60, y=150)
-        btn_sell.place(x=60, y=200)
-        btn_quera_sell.place(x=60, y=250)
+        # 入库登记按钮
+        btn_pur.place(x=100, y=50)
 
-        btn_logout.place(x=30, y=300)
-        btn_exit.place(x=110, y=300)
+        # 清空数据按钮
+        btn_clean.place(x=100, y=100)
+
+        # 出库登记按钮
+        btn_sell.place(x=100, y=150)
+
+        # 入库查询按钮
+        btn_quera_buy.place(x=250, y=50)
+
+        # 库存查询按钮
+        btn_stock.place(x=250, y=100)
+
+        # 出库查询按钮
+        btn_quera_sell.place(x=250, y=150)
+
+        btn_logout.place(x=100, y=200)
+        btn_exit.place(x=250, y=200)
         self.root.mainloop()
 
     def Click_btn_pur(self):
@@ -56,6 +74,24 @@ class Windows(object):
         form = buy.filling()
         if form:
             self.db.upload('tb_buy', form)
+
+    def Click_btn_clean(self):
+
+        self.db.execute("TRUNCATE TABLE tb_buy;")
+        self.db.execute("TRUNCATE TABLE tb_store;")
+        self.db.execute("TRUNCATE TABLE tb_sell;")
+
+    def Click_btn_sell(self):
+        # 出库按钮回调函数
+        self.root.destroy()
+        is_quare = True
+        while is_quare:
+            # 查询库存
+            temp = self.db.query('tb_store')
+            # 使用查询到的库存初始化出售对象，并传入数据库对象
+            Sell = Cs.Sell(temp, self.db)
+            # 获取出售对象的是否循环属性
+            is_quare = Sell.is_quare
 
     def Click_btn_quera_buy(self):
         # 入库记录查询按钮回调
@@ -74,18 +110,6 @@ class Windows(object):
             temp = self.db.query('tb_store')
             Store = CCStore.Store(temp)
             is_check = Store.is_check
-
-    def Click_btn_sell(self):
-        # 出库按钮回调函数
-        self.root.destroy()
-        is_quare = True
-        while is_quare:
-            # 查询库存
-            temp = self.db.query('tb_store')
-            # 使用查询到的库存初始化出售对象，并传入数据库对象
-            Sell = Cs.Sell(temp, self.db)
-            # 获取出售对象的是否循环属性
-            is_quare = Sell.is_quare
 
     def Click_btn_quera_sell(self):
         # 入库记录查询按钮回调
@@ -110,6 +134,9 @@ class Windows(object):
 
 def main():
     is_running = True
+    img_data = base64.b64decode(logo)
+    with open('./logo.png', 'wb') as f:
+        f.write(img_data)
     while is_running:
         # 整个程序的循环，方便注销后依然能够进入系统
         is_Log_In, is_running = Cl.Log_In_main()
@@ -117,6 +144,7 @@ def main():
             root = Windows()
             is_Log_In = root.is_Log_In
             is_running = root.is_running
+    os.remove('./logo.png')
 
 
 if __name__ == '__main__':

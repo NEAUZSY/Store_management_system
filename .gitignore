@@ -131,3 +131,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 /Client/upx.exe
+/upx.exe
