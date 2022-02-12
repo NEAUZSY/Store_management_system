@@ -6,10 +6,10 @@ from datetime import datetime
 from SQL import MyDb
 
 info = [
-    ['1001', '李华', '男', '2014-01-25', '广东', '计算5班', '1001', '李华', 10, 1, 10, '计算5班'],
-    ['1002', '小米', '男', '2015-11-08', '深圳', '计算5班', '1002', '小米', 10, 2, 20, '计算5班'],
-    ['1003', '刘亮', '男', '2015-09-12', '福建', '计算5班', '1003', '刘亮', 10, 3, 30, '计算5班'],
-    ['1004', '白鸽', '女', '2016-04-01', '湖南', '计算5班', '1004', '白鸽', 10, 4, 40, '计算5班']]
+    ['1001', '李华', '男', '2014-01-25', '广东', '计算5班', '1001', '李华', 10.0, 1.0, 10, '计算5班'],
+    ['1002', '小米', '男', '2015-11-08', '深圳', '计算5班', '1002', '小米', 10.0, 2.0, 20, '计算5班'],
+    ['1003', '刘亮', '男', '2015-09-12', '福建', '计算5班', '1003', '刘亮', 10.0, 3.0, 30, '计算5班'],
+    ['1004', '白鸽', '女', '2016-04-01', '湖南', '计算5班', '1004', '白鸽', 10.0, 4.0, 40, '计算5班']]
 
 
 class Sell(object):
@@ -285,7 +285,9 @@ class Sell(object):
 
         # 获取点击的商品
         item = self.tree.selection()
-        self.item_select = self.tree.item(item, "values")
+        item_click = self.tree.item(item, "values")
+        
+        print(item_click)
         # 创建一个单独的信息录入窗口
         one_info = Tk()
 
@@ -312,8 +314,8 @@ class Sell(object):
         En_quantity = Entry(one_info, bd=2, justify='center', width=10)
         En_value = Entry(one_info, bd=2, justify='center', width=10)
 
-        En_quantity.insert(0, self.item_select[2])
-        En_value.insert(0, self.item_select[3])
+        En_quantity.insert(0, item_click[2])
+        En_value.insert(0, item_click[3])
 
         En_quantity.place(x=60, y=20)
         En_value.place(x=180, y=20)
@@ -321,23 +323,25 @@ class Sell(object):
         btn_cancle = Button(one_info, text="取消", command=one_info.destroy)
         btn_confirm = Button(one_info, text="确认",
                              # 确认函数传入参数包括窗口对象和窗口中几个输入框的值
-                             command=lambda: self.confirm_self(one_info, En_quantity.get(), En_value.get()))
+                             command=lambda: self.confirm_self(one_info, En_quantity.get(), En_value.get(), item_click))
 
         btn_cancle.place(x=60, y=100)
         btn_confirm.place(x=180, y=100)
 
         one_info.mainloop()
 
-    def confirm_self(self, master, quantity, value):
+    def confirm_self(self, master, quantity, value, item_click):
 
         for i, data in enumerate(self.item_list):
+            if not item_click[0] == data[0]:
+                continue
             if float(quantity) > float(self.item_store[i][2]):
                 # 如果输入的出库数量大于库存数量择退出本次输入
                 messagebox.askokcancel('输入有误', '库存商品不足以出库')  # 弹出对话框
                 master.destroy()
                 return
             # 在被选择到的所有商品列表中定位刚刚录入过信息的那条商品信息并更新出库列表 item_list
-            if str(data[0]) == self.item_select[0]:
+            if str(data[0]) == item_click[0]:
                 self.item_list[i][2] = quantity
                 self.item_list[i][3] = value
         # print('显示：', self.item_list)
