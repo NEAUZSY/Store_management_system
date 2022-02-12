@@ -77,7 +77,7 @@ class Import_Datas(object):
                 data_buy = '"' + '", "'.join([i for i in data_list]) + '"'
                 task_buy = 'insert into tb_buy values(%s);' % data_buy
                 self.db.execute(task_buy)
-                # print(task_buy)
+                print(task_buy)
 
                 # 库存表处理
                 store_list = data_list[0:9]

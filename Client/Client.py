@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import messagebox
 import Client_Buy as Cb
 import Client_Login as Cl
 import Client_Sell as Cs
@@ -77,21 +78,21 @@ class Windows(object):
 
     def Click_btn_clean(self):
 
-        self.db.execute("TRUNCATE TABLE tb_buy;")
-        self.db.execute("TRUNCATE TABLE tb_store;")
-        self.db.execute("TRUNCATE TABLE tb_sell;")
+        a = messagebox.askokcancel('清空确认', '您是否要要清楚数据库数据？')
+        if a:
+            self.db.execute("TRUNCATE TABLE tb_buy;")
+            self.db.execute("TRUNCATE TABLE tb_store;")
+            self.db.execute("TRUNCATE TABLE tb_sell;")
+        else:
+            return
 
     def Click_btn_sell(self):
         # 出库按钮回调函数
         self.root.destroy()
-        is_quare = True
-        while is_quare:
-            # 查询库存
-            temp = self.db.query('tb_store')
-            # 使用查询到的库存初始化出售对象，并传入数据库对象
-            Sell = Cs.Sell(temp, self.db)
-            # 获取出售对象的是否循环属性
-            is_quare = Sell.is_quare
+        # 查询库存
+        temp = self.db.query('tb_store')
+        # 使用查询到的库存初始化出售对象，并传入数据库对象
+        Sell = Cs.Sell(temp, self.db)
 
     def Click_btn_quera_buy(self):
         # 入库记录查询按钮回调

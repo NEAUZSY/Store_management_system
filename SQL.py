@@ -32,7 +32,7 @@ class MyDb(object):
             dic['单位'] = '个'
         # keys = 'id，kind，name，source，model，unit，quantity，cost_withtax，cost_withouttax'
         task = 'insert into {} ' \
-               'values({},"{}","{}","{}","{}","{}","{}",' \
+               'values("{}","{}","{}","{}","{}","{}","{}",' \
                '"{}",{},{},{},{},{},"{}",{});'.format(table,
                                                       dic['序号'],
                                                       dic['日期'],
@@ -90,7 +90,7 @@ class MyDb(object):
     def delete(self, datas):
         task = 'delete from tb_store where id in ({});'.format(datas)
         self.execute(task)
-        print(task)
+        # print(task)
         # print('出库成功')
         self.delete_id = datas
         self.refresh_store('delete')
@@ -99,7 +99,7 @@ class MyDb(object):
         # 增加sell表数据 输入为包含多个字典的列表
         for d in dics:
             task = 'insert into tb_sell ' \
-                   'values({},"{}","{}","{}","{}","{}","{}",' \
+                   'values("{}","{}","{}","{}","{}","{}","{}",' \
                    '"{}",{},{},{},{},{},"{}",{});'.format(d['序号'],
                                                           d['日期'],
                                                           d['往来单位'],
@@ -132,8 +132,14 @@ class MyDb(object):
                 # 如果出库数量和库存数量相等，择删除该商品
                 task = 'delete from tb_store where id={};'.format(store[i][0])
             else:
-                left = float(store[i][2]) - float(dic_['数量'])
-                task = 'UPDATE tb_store SET quantity={} WHERE id={};'.format(left, store[i][0])
+                quantity_left = float(store[i][2]) - float(dic_['数量'])
+                # 更新数量
+                # task = 'UPDATE tb_store SET quantity={} WHERE id={};'.format(quantity_left, store[i][0])
+
+                # 更新金额
+                task = 'UPDATE tb_store SET quantity={},value=(SELECT prince FROM (SELECT prince FROM tb_store ' \
+                       'WHERE id={}) as temp)*1.0 WHERE id={};'.format(quantity_left, store[i][0], store[i][0])
+            # print(task)
             self.execute(task)
 
     def refresh_store(self, method):
@@ -149,7 +155,7 @@ class MyDb(object):
                 dic['单价'] = dic['单价（未税）']
                 dic['金额'] = dic['金额（未税）']
             task = 'insert into tb_store ' \
-                   'values({},"{}","{}","{}","{}","{}","{}",' \
+                   'values("{}","{}","{}","{}","{}","{}","{}",' \
                    '"{}",{},{},{},"{}",{});'.format(dic['序号'],
                                                     dic['日期'],
                                                     dic['往来单位'],

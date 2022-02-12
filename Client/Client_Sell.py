@@ -1,4 +1,5 @@
 # -*- encoding=utf-8 -*-
+import time
 from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk
@@ -20,6 +21,8 @@ class Sell(object):
         # 输入为当前tb_store中的库存表
         self.is_selected = True
         self.is_quare = True
+
+
         self.public_info = Tk()  # 创建获取往来单位和日期信息的窗口
         self.selected_id = []  # 出库的商品id
         tt = datetime.now().strftime('%Y-%m-%d')
@@ -30,7 +33,6 @@ class Sell(object):
         self.var_mm = StringVar(value=mm)
         self.var_dd = StringVar(value=dd)
         self.target = StringVar(value='')
-
         self.value_sum = StringVar(value='')  # 出库商品总价
 
         self.sell = True
@@ -39,6 +41,7 @@ class Sell(object):
         self.item_store = []  # 显示商品对应的真实库存
         self.sell_dic_list = []  # 用来存放出库信息的字典列表 元素师包含某个商品的全部出库信息的字典
         # 初始化往来单位和日期窗口
+
         self.public_info_get()
 
         if self.sell:
@@ -56,18 +59,19 @@ class Sell(object):
                 self.value_info = Tk()  # 创建获取往来单位和日期信息的窗口
                 # 初始化数量金额指定窗口
                 self.value_info_get()
-
+                print(self.sell_dic_list)
                 self.db.add_sell_info(self.sell_dic_list)
                 self.db.reduce(self.sell_dic_list, self.item_store)
-                print(self.sell_dic_list)
-                print(self.item_store)
+                # print(self.sell_dic_list)
+                # print(self.item_store)
+                print('出库成功')
 
     def root_init(self):
         self.win.title('库存查询')  # 标题
         screenwidth = self.win.winfo_screenwidth()  # 屏幕宽度
         screenheight = self.win.winfo_screenheight()  # 屏幕高度
-        width = 1300
-        height = 500
+        width = 1400
+        height = 600
         x = int((screenwidth - width) / 2)
         y = int((screenheight - height) / 2)
         self.win.geometry('{}x{}+{}+{}'.format(width, height, x, y))  # 大小以及位置
@@ -83,7 +87,7 @@ class Sell(object):
                    '数量', '单价', '金额', '备注/序列号']
         table = ttk.Treeview(
             master=tabel_frame,  # 父容器
-            height=15,  # 表格显示的行数,height行
+            height=25,  # 表格显示的行数,height行
             columns=columns,  # 显示的列
             show='headings',  # 隐藏首列
             selectmode="extended",  # 选择模式为可多选
@@ -110,11 +114,12 @@ class Sell(object):
         self.table = table
 
         btn_sell = Button(self.win, text="下一步", command=self.Sell)
-        btn_sell.place(x=150, y=400)
+        btn_sell.place(x=150, y=height-50)
 
         btn_back = Button(self.win, text="退出", command=self.Back)
-        btn_back.place(x=50, y=400)
+        btn_back.place(x=50, y=height-50)
 
+        self.win.protocol("WM_DELETE_WINDOW", self.Back)
         self.win.mainloop()
 
     def public_info_get(self):
@@ -177,7 +182,9 @@ class Sell(object):
 
         btn_back = Button(self.public_info, text="返回", command=self.info_back)
         btn_back.place(x=200, y=130)
+        # 这里出现了问题
 
+        self.public_info.protocol("WM_DELETE_WINDOW", self.info_back)
         self.public_info.mainloop()
 
     def check_input(self):
@@ -252,7 +259,7 @@ class Sell(object):
         """出售提交函数，在金额数量选择窗口处点击确认按钮后的回调函数"""
         data = "{}-{}-{}".format(self.var_yy.get(), self.var_mm.get(), self.var_dd.get())
         # 遍历外部传入的列表 此处为所有库存
-        print(self.item_list)
+        # print(self.item_list)
         i = 0
         for rows in self.info_:
             # 定位到某一个存在于被选择列表中的商品
@@ -275,11 +282,8 @@ class Sell(object):
                 self.sell_dic_list.append(dic)
                 i += 1
         # print(self.sell_dic_list)
-        try:
-            self.value_info.destroy()
-            # self.public_info.destroy()
-        except Exception as e:
-            print(e)
+
+        self.value_info.destroy()
 
     def treeviewClick(self, event):  # 单击
 
@@ -287,7 +291,7 @@ class Sell(object):
         item = self.tree.selection()
         item_click = self.tree.item(item, "values")
         
-        print(item_click)
+        # print(item_click)
         # 创建一个单独的信息录入窗口
         one_info = Tk()
 
@@ -325,8 +329,8 @@ class Sell(object):
                              # 确认函数传入参数包括窗口对象和窗口中几个输入框的值
                              command=lambda: self.confirm_self(one_info, En_quantity.get(), En_value.get(), item_click))
 
-        btn_cancle.place(x=60, y=100)
-        btn_confirm.place(x=180, y=100)
+        btn_cancle.place(x=180, y=100)
+        btn_confirm.place(x=60, y=100)
 
         one_info.mainloop()
 
