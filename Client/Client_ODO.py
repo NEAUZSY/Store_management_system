@@ -7,7 +7,7 @@ from openpyxl.styles import Border, Side, PatternFill, Font, Alignment
 from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk
-from multiprocessing import Queue, Process
+from multiprocessing import Queue, Process, freeze_support
 from utils.log import log
 from utils.generate_pdf import PDFConverter
 from utils.upper_value import cnumber
@@ -24,7 +24,7 @@ info = [
 
 class ODO(object):
     def __init__(self, info_, db, User):
-
+        freeze_support()
         self.User = User
 
         self.db = db
@@ -113,6 +113,9 @@ class ODO(object):
 
         generate_process.start()
         display_process.start()
+
+        generate_process.join()
+        self.win.destroy()
 
     def Click_Back(self):
         self.is_check = False
@@ -293,8 +296,10 @@ def display(q: Queue, pages):
 
 
 def main(info_):
+    freeze_support()
     quare = ODO(info_, MyDb())
 
 
 if __name__ == '__main__':
+    freeze_support()
     main(info)

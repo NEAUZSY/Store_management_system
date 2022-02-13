@@ -1,7 +1,9 @@
 import base64
 import os
+
 from tkinter import *
 from tkinter import messagebox
+from multiprocessing import freeze_support
 
 import Client_Buy as Cb
 import Client_Check_Buy as Ccb
@@ -171,4 +173,5 @@ def main():
 
 
 if __name__ == '__main__':
+    freeze_support()
     main()
