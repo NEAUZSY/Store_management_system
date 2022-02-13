@@ -22,7 +22,7 @@ class Import_Datas(object):
         self.root.title('选择要导入的文件')
         label = tk.Label(self.root, text='文件路径：')
         label.place(x=10, y=10)
-        self.path = tk.StringVar(value=r'C:\Users\NEAUZSY\Desktop\大类_唐山迈拓科技有限公司.xlsx')  # 创建文件路径变量
+        self.path = tk.StringVar(value=r'C:\Users\NEAUZSY\Desktop\123.xlsx')  # 创建文件路径变量
 
         enter = tk.Entry(self.root, width=30, textvariable=self.path)  # 创建显示文件路径的输入框
         enter.place(x=80, y=15)
@@ -63,7 +63,7 @@ class Import_Datas(object):
     def WorkBook_Init(self):
         try:
             self.wb = load_workbook(self.path)
-            self.ws = self.wb['商品购入模板（期初）']
+            self.ws = self.wb['import']
             print('初始化工作表完成 开始导入数据---->')
         except Exception as e:
             print(e)

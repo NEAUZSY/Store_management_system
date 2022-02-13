@@ -22,7 +22,6 @@ class Sell(object):
         self.is_selected = True
         self.is_quare = True
 
-
         self.public_info = Tk()  # 创建获取往来单位和日期信息的窗口
         self.selected_id = []  # 出库的商品id
         tt = datetime.now().strftime('%Y-%m-%d')
@@ -281,7 +280,6 @@ class Sell(object):
                        '是否含税': 1}
                 self.sell_dic_list.append(dic)
                 i += 1
-        # print(self.sell_dic_list)
 
         self.value_info.destroy()
 

@@ -15,7 +15,7 @@ class Sell(object):
     def __init__(self, info_):
         self.is_check = True
         self.win = tkinter.Tk()  # 窗口
-        self.win.title('库存查询')  # 标题
+        self.win.title('出库信息查询查询')  # 标题
         screenwidth = self.win.winfo_screenwidth()  # 屏幕宽度
         screenheight = self.win.winfo_screenheight()  # 屏幕高度
         width = 1400

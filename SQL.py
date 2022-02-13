@@ -133,13 +133,16 @@ class MyDb(object):
                 task = 'delete from tb_store where id={};'.format(store[i][0])
             else:
                 quantity_left = float(store[i][2]) - float(dic_['数量'])
-                # 更新数量
-                # task = 'UPDATE tb_store SET quantity={} WHERE id={};'.format(quantity_left, store[i][0])
+                value_left = float(store[i][3]) - float(dic_['金额'])
+                prince = value_left / quantity_left
 
-                # 更新金额
-                task = 'UPDATE tb_store SET quantity={},value=(SELECT prince FROM (SELECT prince FROM tb_store ' \
-                       'WHERE id={}) as temp)*1.0 WHERE id={};'.format(quantity_left, store[i][0], store[i][0])
-            # print(task)
+                # 更新库存
+                task = 'UPDATE tb_store SET ' \
+                       '`quantity`={}, `prince`= {}, `value` ={} WHERE id={};'.format(quantity_left,
+                                                                                      prince,
+                                                                                      value_left,
+                                                                                      store[i][0])
+                # print(task)
             self.execute(task)
 
     def refresh_store(self, method):
