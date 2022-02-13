@@ -32,7 +32,8 @@ class Sell(object):
 
         columns = ['序号', '入库时间', '往来单位', '一级分类',
                    '二级分类', '商品名称', '规格型号', '单位',
-                   '数量', '单价（含税）', '单价（未税）', '金额（含税）', '金额（未税）', '备注/序列号']
+                   '数量', '单价（含税）', '单价（未税）', '金额（含税）',
+                   '金额（未税）', '备注/序列号', '生成出库单次数']
         table = ttk.Treeview(
             master=tabel_frame,  # 父容器
             height=25,  # 表格显示的行数,height行
@@ -53,23 +54,14 @@ class Sell(object):
         yscroll.pack(side=RIGHT, fill=Y)
         print(info_)
         for index, data in enumerate(info_):
-            table.insert('', END, values=data)  # 添加数据到末尾
+            table.insert('', END, values=tuple(list(data[:-2]) + [data[-1]]))  # 添加数据到末尾
 
-        table.bind('<<TreeviewSelect>>', self.selectTree)
         table.pack(fill=BOTH, expand=True)
         self.table = table
         btn_back = Button(self.win, text="返回", command=self.Back)
         btn_back.place(x=150, y=height-50)
 
         self.win.mainloop()
-
-    def selectTree(self, event):
-        item_list = []
-        for item in self.table.selection():
-            item_id = self.table.item(item, "values")[0]
-            # print(item_text)
-            item_list.append(item_id)
-        # print(item_list)
 
     def Back(self):
         self.is_check = False

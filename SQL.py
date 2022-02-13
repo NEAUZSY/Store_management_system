@@ -100,21 +100,21 @@ class MyDb(object):
         for d in dics:
             task = 'insert into tb_sell ' \
                    'values("{}","{}","{}","{}","{}","{}","{}",' \
-                   '"{}",{},{},{},{},{},"{}",{});'.format(d['序号'],
-                                                          d['日期'],
-                                                          d['往来单位'],
-                                                          d['一级分类'],
-                                                          d['二级分类'],
-                                                          d['商品名称'],
-                                                          d['规格型号'],
-                                                          d['单位'],
-                                                          d['数量'],
-                                                          d['单价'],
-                                                          float(d['单价']) / 1.13,
-                                                          d['金额'],
-                                                          float(d['金额']) / 1.13,
-                                                          d['备注/序列号'],
-                                                          d['是否含税'])
+                   '"{}",{},{},{},{},{},"{}",{},0);'.format(d['序号'],
+                                                            d['日期'],
+                                                            d['往来单位'],
+                                                            d['一级分类'],
+                                                            d['二级分类'],
+                                                            d['商品名称'],
+                                                            d['规格型号'],
+                                                            d['单位'],
+                                                            d['数量'],
+                                                            d['单价'],
+                                                            float(d['单价']) / 1.13,
+                                                            d['金额'],
+                                                            float(d['金额']) / 1.13,
+                                                            d['备注/序列号'],
+                                                            d['是否含税'])
             # print(task)
             self.execute(task)
         print('更新出售信息表完成')
@@ -133,7 +133,7 @@ class MyDb(object):
                 task = 'delete from tb_store where id={};'.format(store[i][0])
             else:
                 quantity_left = float(store[i][2]) - float(dic_['数量'])
-                value_left = float(store[i][3]) - float(dic_['金额'])
+                value_left = float(store[i][3]) - (float(store[i][3]) / float(store[i][2])) * float(dic_['数量'])
                 prince = value_left / quantity_left
 
                 # 更新库存

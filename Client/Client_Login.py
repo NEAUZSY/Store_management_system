@@ -4,7 +4,6 @@ import tkinter as tk
 from tkinter import messagebox  # import this to fix messagebox error
 
 
-
 class LogIn(object):
     def __init__(self):
 
@@ -128,7 +127,7 @@ class LogIn(object):
 
 def Log_In_main():
     Log = LogIn()
-    return Log.Log_Variable, Log.is_running
+    return Log.Log_Variable, Log.is_running, Log.var_usr_name.get()
 
 
 if __name__ == "__main__":

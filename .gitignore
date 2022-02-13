@@ -132,3 +132,10 @@ dmypy.json
 .pyre/
 /Client/upx.exe
 /upx.exe
+/.gitignore
+/Client/*.xlsx
+/Client/*.png
+/Client/pdfconver
+/utils/pdfconver
+./usrs_info.pickle
+./file
