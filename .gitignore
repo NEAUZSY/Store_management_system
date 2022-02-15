@@ -139,3 +139,4 @@ dmypy.json
 /utils/pdfconver
 ./usrs_info.pickle
 ./file
+/DB

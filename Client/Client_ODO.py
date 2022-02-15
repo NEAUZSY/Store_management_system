@@ -4,6 +4,7 @@ import time
 import tkinter
 import openpyxl as xl
 from openpyxl.styles import Border, Side, PatternFill, Font, Alignment
+from openpyxl.worksheet.page import PageMargins
 from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk
@@ -103,7 +104,7 @@ class ODO(object):
 
         print(ck_id)
 
-        task = 'UPDATE `tb_odo` SET `CK_id`={} WHERE `MONTH` = {};'.format(ck_id, month)
+        task = 'UPDATE `tb_odo` SET `CK_id`={} WHERE `MONTH` = {};'.format(ck_id + 1, month)
         self.db.execute(task)
 
         queue = Queue(5)
@@ -122,7 +123,7 @@ class ODO(object):
         self.win.destroy()
 
 
-def generate(q: Queue, item_list, id, user, save_Excle=True):
+def generate(q: Queue, item_list, ck_id, user, save_Excle=True):
     log('初始化出库单')
     q.put('初始化出库单')
 
@@ -136,13 +137,13 @@ def generate(q: Queue, item_list, id, user, save_Excle=True):
     # 设置打印格式
     ws.print_options.horizontalCentered = True
     # ws.print_options.verticalCentered = True
-
+    ws.page_margins = PageMargins(left=0, right=0, top=0.75, bottom=0.75)
     # 设置行高
     for i in range(1, data_len + 8):
         ws.row_dimensions[i].height = 27
 
     # 设置列宽
-    col_width = [5.5, 20, 20, 7, 11, 13, 6]
+    col_width = [5.5, 20, 30, 10, 11, 13, 6]
     col = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
     for i, width in enumerate(col_width):
         ws.column_dimensions[col[i]].width = width
@@ -201,7 +202,7 @@ def generate(q: Queue, item_list, id, user, save_Excle=True):
     source_cell.alignment = Alignment(horizontal='left', vertical='center')
 
     id_cell = ws['E4']
-    id_cell.value = '单据号：CK {}{}-{}'.format(date[:4], date[5:7], "%03d" % id)
+    id_cell.value = '单据号：CK {}{}-{}'.format(date[:4], date[5:7], "%03d" % ck_id)
     id_cell.alignment = Alignment(horizontal='right', vertical='center')
 
     log('初始化工作表完成，开始写入数据')
@@ -231,6 +232,7 @@ def generate(q: Queue, item_list, id, user, save_Excle=True):
 
     value_upper_cell = ws['A{}'.format(data_len + 6)]
     value_upper_cell.value = '合计金额大写: ' + upper_value
+    value_upper_cell.alignment = Alignment(horizontal='left', vertical='center', indent=1)
 
     value_cell = ws['F{}'.format(data_len + 6)]
     value_cell.value = '￥' + str(value)
@@ -297,7 +299,7 @@ def display(q: Queue, pages):
 
 def main(info_):
     freeze_support()
-    quare = ODO(info_, MyDb())
+    quare = ODO(info_, MyDb(), 'admin')
 
 
 if __name__ == '__main__':
